@@ -253,7 +253,7 @@ html:not([data-theme="light"]) .button.primary {
 .button.primary:hover { color: #ffd700 !important; /* dourado */ }
 
 /* ============ Layout & Cards ============ */
-.container{max-width:100%;margin:24px auto;padding:-1 16px}
+.container{max-width:80%;margin:24px auto;padding:-1 16px}
 .card{
   background:var(--card);
   padding:24px;
