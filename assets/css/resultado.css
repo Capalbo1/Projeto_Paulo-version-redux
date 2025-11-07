@@ -21,7 +21,6 @@
   --sug-cargos-min-h:110px; /* lista de cargos */
 }
 
-
 /* -------- Card superior (Resultado + Gráfico) -------- */
 .result-card{
   padding:0 !important;
@@ -59,10 +58,10 @@
 .result-card .who{ margin: 0 0 12px; opacity:.95 }
 
 /* Lista D/I/S/C */
-.result-card .disc-counts{ list-style:none; margin:0 20px 10px; padding:0; }
+.result-card .disc-counts{ list-style:none; margin:0 0 10px; padding:0; }
 .result-card .disc-counts li{
   display:flex; align-items:center; gap:10px;
-  padding:6px 17px; border-radius:10px;
+  padding:6px 10px; border-radius:10px;
   background: rgba(255,255,255,.02);
   border:1px solid rgba(255,255,255,.06);
   margin-bottom:8px;
@@ -103,7 +102,7 @@
   display:flex; align-items:center; justify-content:center;
   background: rgba(255,255,255,.02);
   border:1px solid rgba(255,255,255,.06);
-  border-radius:14px; padding: 10px;
+  border-radius:14px; padding:12px;
   min-height:260px;
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
@@ -224,7 +223,7 @@
 .interpretacao .warn{ color: var(--disc-i); }
 
 /* Listas */
-.interpretacao .list{ margin:0; padding-left: 92px; display:block }
+.interpretacao .list{ margin:0; padding-left:18px; display:block }
 .interpretacao .list li{ margin:6px 0 }
 
 /* Ações no rodapé do card inferior */
@@ -373,7 +372,7 @@
   margin:0 0 6px; font-size:.95rem; opacity:.95; text-align:center;
   text-transform:uppercase; font-weight:800; letter-spacing:.02em;
 }
-.result-suggestions .suggestion-col ul{ margin:0; padding-left:100px; }
+.result-suggestions .suggestion-col ul{ margin:0; padding-left:18px; }
 
 /* Responsivo */
 @media (max-width: 880px){
