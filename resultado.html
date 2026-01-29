@@ -307,22 +307,35 @@ function enviarResultadoParaGoogle(dados) {
 
   console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
 
-  fetch(URL_APPS_SCRIPT, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dados)
-  })
-  .then(() => {
-    console.log('✅ DADOS ENVIADOS COM SUCESSO!');
-    console.log('📧 E-mail será enviado para:', dados.email);
-    console.log('📊 Dados salvos na planilha Google Sheets');
-  })
-  .catch(error => {
-    console.error('❌ ERRO AO ENVIAR:', error);
+  // Monta a URL com parâmetros GET
+  const params = new URLSearchParams({
+    nome: dados.nome,
+    email: dados.email,
+    D: dados.D,
+    I: dados.I,
+    S: dados.S,
+    C: dados.C,
+    perfil: dados.perfilPredominante,
+    areas: dados.areasRecomendadas,
+    cargos: dados.cargosIndicados || '',
+    origem: dados.origem
   });
+
+  const urlCompleta = `${URL_APPS_SCRIPT}?${params.toString()}`;
+
+  console.log('🔗 URL de envio:', urlCompleta);
+
+  // Envia via GET
+  fetch(urlCompleta)
+    .then(response => response.text())
+    .then(data => {
+      console.log('✅ RESPOSTA DO SERVIDOR:', data);
+      console.log('📧 E-mail enviado para:', dados.email);
+      console.log('📊 Dados salvos na planilha');
+    })
+    .catch(error => {
+      console.error('❌ ERRO AO ENVIAR:', error);
+    });
 }
 
 // ============= PROCESSAMENTO DOS RESULTADOS =============
@@ -389,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(`#card-${pred.toLowerCase()} .suggestion-col:last-child li`)
   ).map(li => li.textContent).join(", ");
 
-  // Monta objeto de dados
   const dadosParaEnviar = {
     nome: nome,
     email: email,
@@ -405,7 +417,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log('📦 Dados preparados para envio:', dadosParaEnviar);
 
-  // Evita envio duplicado
   if (!sessionStorage.getItem("disc_enviado")) {
     sessionStorage.setItem("disc_enviado", "1");
     enviarResultadoParaGoogle(dadosParaEnviar);
