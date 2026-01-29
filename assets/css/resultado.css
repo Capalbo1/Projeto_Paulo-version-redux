@@ -383,8 +383,17 @@
 }
 
 /* Impressão */
-@media print{
-  .result-suggestions{ border:none; box-shadow:none; background:#fff; color:#000; }
-  #sugestoes{ page-break-after: always; }
-  .result-suggestions .suggestion-card{ break-inside: avoid; }
+@media print {
+  header, footer, nav {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .container {
+    max-width: 100%;
+  }
 }
+
