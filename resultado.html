@@ -301,10 +301,41 @@
 </footer>
 
 <script>
+// ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
+function enviarResultadoParaGoogle(dados) {
+  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec';
+
+  console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
+
+  fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados)
+  })
+  .then(() => {
+    console.log('✅ DADOS ENVIADOS COM SUCESSO!');
+    console.log('📧 E-mail será enviado para:', dados.email);
+    console.log('📊 Dados salvos na planilha Google Sheets');
+  })
+  .catch(error => {
+    console.error('❌ ERRO AO ENVIAR:', error);
+  });
+}
+
+// ============= PROCESSAMENTO DOS RESULTADOS =============
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('🔍 Página de resultado carregada');
+
   const nome = localStorage.getItem("disc_nome") || "Participante";
   const email = localStorage.getItem("disc_email") || "";
   const respostas = JSON.parse(localStorage.getItem("disc_respostas") || "[]");
+
+  console.log('📋 Nome:', nome);
+  console.log('📧 Email:', email);
+  console.log('📝 Respostas:', respostas);
 
   document.getElementById("res-nome").textContent = nome;
   document.getElementById("res-email").textContent = email ? " • " + email : "";
@@ -318,6 +349,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("c-count").textContent = counts.C;
 
   let pred = Object.keys(counts).reduce((a,b) => counts[a] >= counts[b] ? a : b);
+
+  const perfisNomes = {
+    D: 'Dominância (D) - Executor',
+    I: 'Influência (I) - Comunicador',
+    S: 'Estabilidade (S) - Apoiador',
+    C: 'Conformidade (C) - Analista'
+  };
+
   document.getElementById("res-pred").textContent = pred;
   document.getElementById("res-pred").classList.add(pred.toLowerCase());
   document.getElementById("pred-label").textContent = pred;
@@ -340,57 +379,40 @@ document.addEventListener("DOMContentLoaded", () => {
       plugins: { legend: { position: "bottom" } }
     }
   });
-    // ================= ENVIO PARA GOOGLE =================
+
+  // ================= ENVIO PARA GOOGLE SHEETS + EMAIL =================
   const areasTexto = Array.from(
-    document.querySelectorAll(`#card-${pred.toLowerCase()} li`)
+    document.querySelectorAll(`#card-${pred.toLowerCase()} .suggestion-col:first-child li`)
   ).map(li => li.textContent).join(", ");
+
+  const cargosTexto = Array.from(
+    document.querySelectorAll(`#card-${pred.toLowerCase()} .suggestion-col:last-child li`)
+  ).map(li => li.textContent).join(", ");
+
+  // Monta objeto de dados
+  const dadosParaEnviar = {
+    nome: nome,
+    email: email,
+    D: counts.D,
+    I: counts.I,
+    S: counts.S,
+    C: counts.C,
+    perfilPredominante: perfisNomes[pred],
+    areasRecomendadas: areasTexto,
+    cargosIndicados: cargosTexto,
+    origem: "Santa Casa"
+  };
+
+  console.log('📦 Dados preparados para envio:', dadosParaEnviar);
 
   // Evita envio duplicado
   if (!sessionStorage.getItem("disc_enviado")) {
     sessionStorage.setItem("disc_enviado", "1");
-
-    enviarResultadoParaGoogle({
-      nome: nome,
-      email: email,
-      D: counts.D,
-      I: counts.I,
-      S: counts.S,
-      C: counts.C,
-      perfilPredominante: pred,
-      areasRecomendadas: areasTexto,
-      origem: "Santa Casa"
-    });
+    enviarResultadoParaGoogle(dadosParaEnviar);
+  } else {
+    console.log('⚠️ Envio já realizado nesta sessão');
   }
 });
-</script>
-
-<script>
-// ============= INTEGRAÇÃO GOOGLE SHEETS + EMAIL - SANTA CASA =============
-function enviarResultadoParaGoogle(dados) {
-  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec';
-
-  console.log('📤 Enviando dados para Google...', dados);
-
-  fetch(URL_APPS_SCRIPT, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dados)
-  })
-  .then(() => {
-    console.log('✅ Dados enviados com sucesso!');
-    console.log('📧 E-mail será enviado para:', dados.email);
-    console.log('📊 Dados salvos na planilha Google Sheets');
-
-    // Modal de confirmação (será implementado na etapa 2)
-    // mostrarModalConfirmacao();
-  })
-  .catch(error => {
-    console.error('❌ Erro ao enviar dados:', error);
-  });
-}
 </script>
 
 </body>
