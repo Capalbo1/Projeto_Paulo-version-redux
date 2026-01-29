@@ -301,57 +301,50 @@
 </footer>
 
 <script>
-// ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
-// ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
+  // ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
 function enviarResultadoParaGoogle(dados) {
-  // ATENÇÃO: Substitua esta URL pela nova URL do seu Apps Script
-  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzs78jYPhM45one2iD-_vX58tyPHPSdY0Yf8KW-MrgKvecAdnI4Kw15kQxheqUWdGDGqQ/exec';
+  // ⚠️ IMPORTANTE: Substitua pela URL REAL da sua implantação CRV!
+  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec'; // 
 
   console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
 
-  // Primeiro teste com fetch para ver erro
-  fetch(URL_APPS_SCRIPT + '?teste=1')
-    .then(response => response.text())
-    .then(text => {
-      console.log('✅ Teste de conexão:', text);
-    })
-    .catch(err => {
-      console.error('❌ Erro de conexão:', err);
-    });
-
-  // Monta URL com parâmetros (GET)
+  // Monta URL com parâmetros - NÃO use encodeURIComponent
   const params = new URLSearchParams({
-    nome: encodeURIComponent(dados.nome),
-    email: encodeURIComponent(dados.email),
+    nome: dados.nome,
+    email: dados.email,
     D: dados.D,
     I: dados.I,
     S: dados.S,
     C: dados.C,
-    perfil: encodeURIComponent(dados.perfilPredominante),
-    areas: encodeURIComponent(dados.areasRecomendadas),
-    cargos: encodeURIComponent(dados.cargosIndicados || ''),
-    origem: encodeURIComponent(dados.origem)
+    perfil: dados.perfilPredominante,
+    areas: dados.areasRecomendadas || '',
+    cargos: dados.cargosIndicados || '',
+    origem: dados.origem || 'Santa Casa'
   });
 
   const urlCompleta = `${URL_APPS_SCRIPT}?${params.toString()}`;
+  console.log('🔗 URL de envio:', urlCompleta);
 
-  console.log('🔗 URL completa:', urlCompleta);
-
-  // Tente primeiro com fetch para ver o erro
+  // Tenta primeiro com fetch para debug
   fetch(urlCompleta)
     .then(response => response.json())
     .then(data => {
       console.log('✅ Resposta do servidor:', data);
+      if (data.status === 'success') {
+        console.log('📊 Planilha:', data.planilha);
+        console.log('📧 E-mail:', data.email);
+      } else {
+        console.error('❌ Erro no servidor:', data.message);
+      }
     })
     .catch(err => {
-      console.error('❌ Erro no fetch:', err);
-      // Fallback para iframe
+      console.error('❌ Erro no fetch, tentando iframe...', err);
       enviarViaIframe(urlCompleta);
     });
 }
 
 function enviarViaIframe(url) {
-  console.log('🔄 Tentando enviar via iframe...');
+  console.log('🔄 Enviando via iframe...');
 
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none';
@@ -361,10 +354,11 @@ function enviarViaIframe(url) {
   iframe.src = url;
 
   iframe.onload = function() {
-    console.log('✅ Iframe carregado');
+    console.log('✅ Iframe carregado - dados enviados!');
     setTimeout(() => {
-      document.body.removeChild(iframe);
-      console.log('✅ Dados enviados com sucesso via iframe!');
+      if (iframe.parentNode) {
+        document.body.removeChild(iframe);
+      }
     }, 3000);
   };
 
