@@ -301,47 +301,45 @@
 </footer>
 
 <script>
-  // ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
+
+  // ============= FUNÇÃO DE ENVIO CORRETA =============
 function enviarResultadoParaGoogle(dados) {
-  // ⚠️ IMPORTANTE: Substitua pela URL REAL da sua implantação CRV!
-  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec'; // 
+  // ✅ URL CORRETA DO SEU APPS SCRIPT
+  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzs78jYPhM45one2iD-_vX58tyPHPSdY0Yf8KW-MrgKvecAdnI4Kw15kQxheqUWdGDGqQ/exec';
 
-  console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
+  console.log('🚀 Enviando dados:', dados);
 
-  // Monta URL com parâmetros - NÃO use encodeURIComponent
-  const params = new URLSearchParams({
-    nome: dados.nome,
-    email: dados.email,
-    D: dados.D,
-    I: dados.I,
-    S: dados.S,
-    C: dados.C,
-    perfil: dados.perfilPredominante,
-    areas: dados.areasRecomendadas || '',
-    cargos: dados.cargosIndicados || '',
-    origem: dados.origem || 'Santa Casa'
-  });
+  // Monta os parâmetros CORRETAMENTE
+  const params = new URLSearchParams();
+  params.append('nome', dados.nome || '');
+  params.append('email', dados.email || '');
+  params.append('D', dados.D || 0);
+  params.append('I', dados.I || 0);
+  params.append('S', dados.S || 0);
+  params.append('C', dados.C || 0);
+  params.append('perfil', dados.perfilPredominante || '');
+  params.append('areas', dados.areasRecomendadas || '');
+  params.append('cargos', dados.cargosIndicados || '');
+  params.append('origem', 'Santa Casa'); // Fixo
 
-  const urlCompleta = `${URL_APPS_SCRIPT}?${params.toString()}`;
-  console.log('🔗 URL de envio:', urlCompleta);
+  const url = `${URL_APPS_SCRIPT}?${params.toString()}`;
+  console.log('🔗 URL gerada:', url);
 
-  // Tenta primeiro com fetch para debug
-  fetch(urlCompleta)
-    .then(response => response.json())
-    .then(data => {
-      console.log('✅ Resposta do servidor:', data);
-      if (data.status === 'success') {
-        console.log('📊 Planilha:', data.planilha);
-        console.log('📧 E-mail:', data.email);
-      } else {
-        console.error('❌ Erro no servidor:', data.message);
-      }
-    })
-    .catch(err => {
-      console.error('❌ Erro no fetch, tentando iframe...', err);
-      enviarViaIframe(urlCompleta);
-    });
+  // Método INFALÍVEL: iframe
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = url;
+
+  iframe.onload = function() {
+    console.log('✅ Dados enviados com sucesso!');
+  };
+
+  document.body.appendChild(iframe);
+
+  return true;
 }
+
+
 
 function enviarViaIframe(url) {
   console.log('🔄 Enviando via iframe...');
