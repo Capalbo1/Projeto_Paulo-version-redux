@@ -363,5 +363,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+
+<script>
+// ============= INTEGRAÇÃO GOOGLE SHEETS + EMAIL - SANTA CASA =============
+function enviarResultadoParaGoogle(dados) {
+  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec';
+
+  console.log('📤 Enviando dados para Google...', dados);
+
+  fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados)
+  })
+  .then(() => {
+    console.log('✅ Dados enviados com sucesso!');
+    console.log('📧 E-mail será enviado para:', dados.email);
+    console.log('📊 Dados salvos na planilha Google Sheets');
+
+    // Modal de confirmação (será implementado na etapa 2)
+    // mostrarModalConfirmacao();
+  })
+  .catch(error => {
+    console.error('❌ Erro ao enviar dados:', error);
+  });
+}
+</script>
+
 </body>
 </html>
