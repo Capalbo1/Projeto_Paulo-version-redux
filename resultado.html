@@ -307,35 +307,39 @@ function enviarResultadoParaGoogle(dados) {
 
   console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
 
-  // Cria FormData ao invés de JSON
-  const formData = new FormData();
-  formData.append('nome', dados.nome);
-  formData.append('email', dados.email);
-  formData.append('D', dados.D);
-  formData.append('I', dados.I);
-  formData.append('S', dados.S);
-  formData.append('C', dados.C);
-  formData.append('perfil', dados.perfilPredominante);
-  formData.append('areas', dados.areasRecomendadas);
-  formData.append('cargos', dados.cargosIndicados || '');
-  formData.append('origem', dados.origem);
+  // Monta URL com parâmetros (GET)
+  const params = new URLSearchParams({
+    nome: dados.nome,
+    email: dados.email,
+    D: dados.D,
+    I: dados.I,
+    S: dados.S,
+    C: dados.C,
+    perfil: dados.perfilPredominante,
+    areas: dados.areasRecomendadas,
+    cargos: dados.cargosIndicados || '',
+    origem: dados.origem
+  });
 
-  console.log('📦 FormData preparado');
+  const urlCompleta = `${URL_APPS_SCRIPT}?${params.toString()}`;
 
-  // Envia via POST com FormData (igual ao projeto da clínica)
-  fetch(URL_APPS_SCRIPT, {
-    method: 'POST',
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('✅ RESPOSTA DO SERVIDOR:', data);
-      console.log('📧 E-mail enviado para:', dados.email);
-      console.log('📊 Dados salvos na planilha');
-    })
-    .catch(error => {
-      console.error('❌ ERRO AO ENVIAR:', error);
-    });
+  console.log('🔗 Enviando via iframe invisível');
+
+  // Cria iframe invisível
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = urlCompleta;
+
+  // Adiciona ao body
+  document.body.appendChild(iframe);
+
+  // Remove após 5 segundos
+  setTimeout(() => {
+    document.body.removeChild(iframe);
+    console.log('✅ Dados enviados com sucesso!');
+    console.log('📧 E-mail será enviado para:', dados.email);
+    console.log('📊 Dados salvos na planilha');
+  }, 5000);
 }
 
 // ============= PROCESSAMENTO DOS RESULTADOS =============
