@@ -1,11 +1,4 @@
 // ========= Tema (auto/dark/light) + troca do gráfico =========
-
-// ================= API GOOGLE =================
-const API_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
-
-/* ==========================================================
-   TEMA
-========================================================== */
 (() => {
   const root = document.documentElement;
   const btn = document.getElementById('themeToggle');
@@ -37,9 +30,7 @@ const API_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
   });
 })();
 
-/* ==========================================================
-   ÂNCORAS COM ROLAGEM SUAVE
-========================================================== */
+// ========= Âncoras com rolagem suave =========
 (() => {
   const headerOffset = 72;
   const smoothScrollTo = (el) => {
@@ -60,9 +51,7 @@ const API_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
   });
 })();
 
-/* ==========================================================
-   BOTÃO "VOLTAR AO TOPO"
-========================================================== */
+// ========= Botão "Voltar ao topo" =========
 (() => {
   const btn = document.getElementById('backToTop');
   if (!btn) return;
@@ -78,9 +67,7 @@ const API_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
   });
 })();
 
-/* ==========================================================
-   PERGUNTAS DISC (DADOS APENAS)
-========================================================== */
+// ========= Perguntas DISC =========
 window.DISC_QUESTOES = [
   {
     texto: "Quando estou em um novo desafio, eu costumo:",
@@ -117,61 +104,77 @@ window.DISC_QUESTOES = [
       { texto: "Confiável e paciente", valor: "S" },
       { texto: "Cuidadoso e preciso", valor: "C" }
     ]
+  },
+  {
+    texto: "Quando recebo uma nova tarefa, eu:",
+    opcoes: [
+      { texto: "Vou direto à execução", valor: "D" },
+      { texto: "Busco envolver a equipe", valor: "I" },
+      { texto: "Organizo meu tempo com calma", valor: "S" },
+      { texto: "Analiso instruções detalhadamente", valor: "C" }
+    ]
+  },
+  {
+    texto: "Em uma reunião, eu costumo:",
+    opcoes: [
+      { texto: "Defender meu ponto de vista com firmeza", valor: "D" },
+      { texto: "Usar humor e entusiasmo", valor: "I" },
+      { texto: "Ouvir e apoiar os demais", valor: "S" },
+      { texto: "Trazer dados e lógica para discussão", valor: "C" }
+    ]
+  },
+  {
+    texto: "Diante de mudanças inesperadas, eu:",
+    opcoes: [
+      { texto: "Reajo rapidamente para ajustar", valor: "D" },
+      { texto: "Busco manter a motivação do grupo", valor: "I" },
+      { texto: "Prefiro manter estabilidade", valor: "S" },
+      { texto: "Avalio riscos e impacto antes", valor: "C" }
+    ]
+  },
+  {
+    texto: "Minha maior motivação é:",
+    opcoes: [
+      { texto: "Vencer desafios", valor: "D" },
+      { texto: "Ganhar reconhecimento social", valor: "I" },
+      { texto: "Ajudar e apoiar pessoas", valor: "S" },
+      { texto: "Fazer algo com qualidade e precisão", valor: "C" }
+    ]
+  },
+  {
+    texto: "Quando preciso tomar uma decisão difícil, eu:",
+    opcoes: [
+      { texto: "Decido de forma firme e rápida", valor: "D" },
+      { texto: "Busco ouvir várias opiniões", valor: "I" },
+      { texto: "Penso nos impactos nas pessoas", valor: "S" },
+      { texto: "Analiso os fatos com cautela", valor: "C" }
+    ]
+  },
+  {
+    texto: "Quando alguém discorda de mim, eu:",
+    opcoes: [
+      { texto: "Defendo meu ponto com força", valor: "D" },
+      { texto: "Uso carisma para convencer", valor: "I" },
+      { texto: "Procuro evitar conflito", valor: "S" },
+      { texto: "Trago regras e dados objetivos", valor: "C" }
+    ]
+  },
+  {
+    texto: "Para mim, sucesso significa:",
+    opcoes: [
+      { texto: "Alcançar grandes resultados", valor: "D" },
+      { texto: "Ter bons relacionamentos", valor: "I" },
+      { texto: "Construir estabilidade", valor: "S" },
+      { texto: "Fazer tudo com excelência", valor: "C" }
+    ]
+  },
+  {
+    texto: "Costumo ser mais:",
+    opcoes: [
+      { texto: "Competitivo e direto", valor: "D" },
+      { texto: "Comunicativo e animado", valor: "I" },
+      { texto: "Calmo e paciente", valor: "S" },
+      { texto: "Cauteloso e detalhista", valor: "C" }
+    ]
   }
 ];
-
-/* ==========================================================
-   ENVIO PARA GOOGLE (PLANILHA + EMAIL)
-========================================================== */
-function enviarResultadoParaGoogle(resultado) {
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(resultado)
-  })
-  .then(r => r.json())
-  .then(resp => {
-    console.log("✅ Resultado enviado:", resp);
-  })
-  .catch(err => {
-    console.error("❌ Erro ao enviar:", err);
-  });
-}
-
-/* ==========================================================
-   FUNÇÃO DE FINALIZAÇÃO (GANCHO SEGURO)
-========================================================== */
-/*
-  ⚠️ ESTA FUNÇÃO NÃO EXISTIA ANTES
-  Ela NÃO quebra nada.
-  Ela serve para você CHAMAR quando o teste terminar.
-*/
-function finalizarTesteDISC(dados) {
-  /*
-    dados deve conter:
-    {
-      nome,
-      email,
-      D,
-      I,
-      S,
-      C,
-      perfilPredominante,
-      areasRecomendadas
-    }
-  */
-
-  const payload = {
-    nome: dados.nome || '',
-    email: dados.email || '',
-    D: dados.D || 0,
-    I: dados.I || 0,
-    S: dados.S || 0,
-    C: dados.C || 0,
-    perfilPredominante: dados.perfilPredominante || '',
-    areasRecomendadas: dados.areasRecomendadas || '',
-    origem: "Santa Casa"
-  };
-
-  enviarResultadoParaGoogle(payload);
-}
