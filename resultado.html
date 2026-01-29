@@ -302,44 +302,77 @@
 
 <script>
 // ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
+// ============= FUNÇÃO DE ENVIO PARA GOOGLE SHEETS + EMAIL =============
 function enviarResultadoParaGoogle(dados) {
-  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycby1g57AFA1dKyWOxq-6I-1Nn2jSlMCNW7MjGvfMaAhO6zlo0CMYfDJx6fCBZGUqmNcWDw/exec';
+  // ATENÇÃO: Substitua esta URL pela nova URL do seu Apps Script
+  const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzs78jYPhM45one2iD-_vX58tyPHPSdY0Yf8KW-MrgKvecAdnI4Kw15kQxheqUWdGDGqQ/exec';
 
   console.log('📤 ENVIANDO DADOS PARA GOOGLE:', dados);
 
+  // Primeiro teste com fetch para ver erro
+  fetch(URL_APPS_SCRIPT + '?teste=1')
+    .then(response => response.text())
+    .then(text => {
+      console.log('✅ Teste de conexão:', text);
+    })
+    .catch(err => {
+      console.error('❌ Erro de conexão:', err);
+    });
+
   // Monta URL com parâmetros (GET)
   const params = new URLSearchParams({
-    nome: dados.nome,
-    email: dados.email,
+    nome: encodeURIComponent(dados.nome),
+    email: encodeURIComponent(dados.email),
     D: dados.D,
     I: dados.I,
     S: dados.S,
     C: dados.C,
-    perfil: dados.perfilPredominante,
-    areas: dados.areasRecomendadas,
-    cargos: dados.cargosIndicados || '',
-    origem: dados.origem
+    perfil: encodeURIComponent(dados.perfilPredominante),
+    areas: encodeURIComponent(dados.areasRecomendadas),
+    cargos: encodeURIComponent(dados.cargosIndicados || ''),
+    origem: encodeURIComponent(dados.origem)
   });
 
   const urlCompleta = `${URL_APPS_SCRIPT}?${params.toString()}`;
 
-  console.log('🔗 Enviando via iframe invisível');
+  console.log('🔗 URL completa:', urlCompleta);
 
-  // Cria iframe invisível
+  // Tente primeiro com fetch para ver o erro
+  fetch(urlCompleta)
+    .then(response => response.json())
+    .then(data => {
+      console.log('✅ Resposta do servidor:', data);
+    })
+    .catch(err => {
+      console.error('❌ Erro no fetch:', err);
+      // Fallback para iframe
+      enviarViaIframe(urlCompleta);
+    });
+}
+
+function enviarViaIframe(url) {
+  console.log('🔄 Tentando enviar via iframe...');
+
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none';
-  iframe.src = urlCompleta;
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.src = url;
 
-  // Adiciona ao body
+  iframe.onload = function() {
+    console.log('✅ Iframe carregado');
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+      console.log('✅ Dados enviados com sucesso via iframe!');
+    }, 3000);
+  };
+
+  iframe.onerror = function() {
+    console.error('❌ Erro ao carregar iframe');
+  };
+
   document.body.appendChild(iframe);
-
-  // Remove após 5 segundos
-  setTimeout(() => {
-    document.body.removeChild(iframe);
-    console.log('✅ Dados enviados com sucesso!');
-    console.log('📧 E-mail será enviado para:', dados.email);
-    console.log('📊 Dados salvos na planilha');
-  }, 5000);
 }
 
 // ============= PROCESSAMENTO DOS RESULTADOS =============
