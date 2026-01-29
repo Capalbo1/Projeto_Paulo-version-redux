@@ -382,18 +382,45 @@
   .result-suggestions .suggestions-grid{ grid-template-columns: 1fr; }
 }
 
-/* Impressão */
 @media print {
-  header, footer, nav {
+  /* Remove elementos não essenciais */
+  header, footer, nav, .theme-switch, .actions, .site-header, .site-footer {
     display: none !important;
   }
 
-  body {
-    margin: 0;
+  /* Ajusta o corpo para não criar páginas extras */
+  html, body {
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
   }
 
   .container {
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Evita quebras de página dentro das seções principais */
+  .result-card, .result-suggestions, .interpretacao {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Remove estilos que podem causar problemas */
+  .result-card, .suggestion-card, .trait-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* Ajusta cores para preto e branco */
+  * {
+    color: #000 !important;
+    background: #fff !important;
   }
 }
 
