@@ -178,3 +178,166 @@ window.DISC_QUESTOES = [
     ]
   }
 ];
+
+function mostrarAlerta(mensagem) {
+  const overlay = document.createElement("div");
+  overlay.className = "alert-overlay show";
+
+  overlay.innerHTML = `
+    <div class="alert-modal">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <div class="text">${mensagem}</div>
+      <button class="close">&times;</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.documentElement.classList.add("modal-open");
+
+  const fechar = () => {
+    overlay.remove();
+    document.documentElement.classList.remove("modal-open");
+  };
+
+  overlay.querySelector(".close").onclick = fechar;
+  overlay.onclick = (e) => {
+    if (e.target === overlay) fechar();
+  };
+}
+
+function mostrarConfirmacao(mensagem) {
+  return new Promise((resolve) => {
+
+    const overlay = document.createElement("div");
+    overlay.className = "alert-overlay show";
+
+    overlay.innerHTML = `
+      <div class="alert-modal">
+        <i class="fa-solid fa-circle-question"></i>
+        <div class="text">${mensagem}</div>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="button primary btn-confirmar">Sim</button>
+          <button class="button primary btn-cancelar">Cancelar</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.documentElement.classList.add("modal-open");
+
+    const fechar = () => {
+      overlay.remove();
+      document.documentElement.classList.remove("modal-open");
+    };
+
+    overlay.querySelector(".btn-confirmar").onclick = () => {
+      fechar();
+      resolve(true);
+    };
+
+    overlay.querySelector(".btn-cancelar").onclick = () => {
+      fechar();
+      resolve(false);
+    };
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const form = document.getElementById("form-consentimento");
+  if (!form) return;
+
+  const nomeInput = document.getElementById("nome");
+  const emailInput = document.getElementById("email");
+  const origemSelect = document.getElementById("origem");
+  const origemOutroField = document.getElementById("origem-outro-field");
+  const origemOutroInput = document.getElementById("origem_outro");
+
+  if (!nomeInput || !emailInput || !origemSelect) return;
+
+  origemSelect.addEventListener("change", () => {
+    if (origemSelect.value === "Outro") {
+      origemOutroField.style.display = "block";
+      origemOutroInput.required = true;
+    } else {
+      origemOutroField.style.display = "none";
+      origemOutroInput.required = false;
+      origemOutroInput.value = "";
+    }
+  });
+
+  function normalizarEmail(email) {
+    return email.trim().toLowerCase();
+  }
+
+   function nomeValido(nome) {
+    const partes = nome.trim().split(" ").filter(p => p.length > 2);
+    return partes.length >= 2 && nome.length >= 6;
+  }
+
+  function emailValido(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email) && email.length >= 6;
+  }
+
+  function emailFake(email) {
+    return (
+      email.includes("@a") ||
+      email.includes("teste") ||
+      email.includes("123") ||
+      !email.includes(".")
+    );
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let nome = nomeInput.value.trim();
+    let email = normalizarEmail(emailInput.value);
+    let origem = origemSelect.value;
+
+    if (origem === "Outro") {
+      origem = origemOutroInput.value.trim();
+    }
+
+    // ❌ Nome inválido
+    if (!nomeValido(nome)) {
+      mostrarAlerta("Digite seu nome e sobrenome.");
+      return;
+    }
+
+    // ❌ Email inválido
+    if (!emailValido(email) || emailFake(email)) {
+      mostrarAlerta("Digite um e-mail válido.");
+      return;
+    }
+
+    // ❌ Origem inválida
+    if (!origem || origem.length < 2) {
+      mostrarAlerta("Informe a origem.");
+      return;
+    }
+
+    const chave = "disc_email_" + email;
+
+    // 🔁 Se já existe → perguntar
+    if (localStorage.getItem(chave)) {
+
+    const confirmar = await mostrarConfirmacao(
+      "Este e-mail já possui um teste.\n\nDeseja refazer e substituir o anterior?"
+    );
+
+    if (!confirmar) return;
+    }
+
+    // Salva novo (sobrescreve)
+    localStorage.setItem(chave, Date.now());
+
+    localStorage.setItem("disc_nome", nome);
+    localStorage.setItem("disc_email", email);
+    localStorage.setItem("disc_origem", origem);
+
+    window.location.href = "instrucoes.html";
+  });
+
+});

@@ -348,9 +348,15 @@ p{margin:8px 0;color:var(--text)}
 
 /* ============ Forms & Perguntas ============ */
 .form .field{margin:10px 0}
-.form input[type="text"], .form input[type="email"]{
-  width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);
-  background:color-mix(in oklab,var(--bg) 92%, white 8%);color:var(--text)
+.form input[type="text"],
+.form input[type="email"],
+.form select {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:color-mix(in oklab,var(--bg) 92%, white 8%);
+  color:var(--text)
 }
 .progress{background:color-mix(in oklab,var(--bg) 88%, white 12%);border:1px solid var(--border);border-radius:10px;height:10px;margin-bottom:14px;overflow:hidden}
 .progress .bar{height:100%;background:var(--accent)}

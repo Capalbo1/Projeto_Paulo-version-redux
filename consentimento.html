@@ -63,6 +63,22 @@
         <input type="email" id="email" name="email" required>
       </div>
 
+      <div class="field">
+        <label for="origem">Origem:</label>
+        <select id="origem" name="origem" required>
+          <option value="">Selecione</option>
+          <option value="Fatec">Fatec</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Indicacao">Indicação</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="field" id="origem-outro-field" style="display:none;">
+        <label for="origem_outro">Qual origem?</label>
+        <input type="text" id="origem_outro" name="origem_outro">
+</div>
+
       <div class="field agree">
         <input type="checkbox" id="agree" name="agree" required>
         <label for="agree">Declaro que li e concordo com os termos da LGPD</label>
@@ -82,29 +98,5 @@
   </div>
 </footer>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("form-consentimento");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const nome = document.getElementById("nome").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const agree = document.getElementById("agree").checked;
-
-    if (!nome || !email || !agree) {
-      alert("Por favor, preencha todos os campos e aceite os termos.");
-      return;
-    }
-
-    // Salva no localStorage
-    localStorage.setItem("disc_nome", nome);
-    localStorage.setItem("disc_email", email);
-
-    // Redireciona para instruções
-    window.location.href = "instrucoes.html";
-  });
-});
-</script>
 </body>
 </html>
