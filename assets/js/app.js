@@ -270,6 +270,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return email.trim().toLowerCase();
   }
 
+  function formatarNome(nome) {
+    return nome
+      .toLowerCase()
+      .split(" ")
+      .filter(p => p.length > 0)
+      .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+      .join(" ");
+  }
+
    function nomeValido(nome) {
     const partes = nome.trim().split(" ").filter(p => p.length > 2);
     return partes.length >= 2 && nome.length >= 6;
@@ -281,23 +290,34 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function emailFake(email) {
-    return (
-      email.includes("@a") ||
-      email.includes("teste") ||
-      email.includes("123") ||
-      !email.includes(".")
-    );
+    const lixo = ["teste", "test", "asd", "123", "abc"];
+    return lixo.some(p => email.includes(p));
+  }
+
+  function ehEmailFatec(email) {
+    return email.endsWith("@fatec.sp.gov.br");
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    let nome = nomeInput.value.trim();
-    let email = normalizarEmail(emailInput.value);
-    let origem = origemSelect.value;
+let nome = nomeInput.value.trim();
+let email = normalizarEmail(emailInput.value);
+let origem = origemSelect.value;
+
+// 🔥 Auto detectar Fatec
+if (ehEmailFatec(email)) {
+  origem = "Fatec";
+  origemSelect.value = "Fatec";
+}
 
     if (origem === "Outro") {
       origem = origemOutroInput.value.trim();
+    }
+
+    if (!origem || origem.length < 2) {
+      mostrarAlerta("Informe a origem.");
+      return;
     }
 
     // ❌ Nome inválido
@@ -309,12 +329,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ❌ Email inválido
     if (!emailValido(email) || emailFake(email)) {
       mostrarAlerta("Digite um e-mail válido.");
-      return;
-    }
-
-    // ❌ Origem inválida
-    if (!origem || origem.length < 2) {
-      mostrarAlerta("Informe a origem.");
       return;
     }
 
@@ -333,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Salva novo (sobrescreve)
     localStorage.setItem(chave, Date.now());
 
-    localStorage.setItem("disc_nome", nome);
+    localStorage.setItem("disc_nome", formatarNome(nome));
     localStorage.setItem("disc_email", email);
     localStorage.setItem("disc_origem", origem);
 
