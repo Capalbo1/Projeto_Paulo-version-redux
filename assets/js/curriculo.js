@@ -601,7 +601,9 @@ function salvarPDF(dados) {
   container.style.width = "794px";
   container.style.background = "#fff";
   container.style.zIndex = "9999";
-  container.style.opacity = "0";
+  container.style.opacity = "1";
+  container.style.position = "fixed";
+  container.style.left = "-9999px";
   container.style.pointerEvents = "none";
 
   container.innerHTML = cvHTML;
@@ -609,6 +611,7 @@ function salvarPDF(dados) {
 
   const nomeSafe = dados.nome.replace(/\s+/g, "-").toLowerCase();
 
+  setTimeout(() => {
   html2pdf().set({
     margin: [12, 18, 12, 18],
     filename: `curriculo-${nomeSafe}.pdf`,
@@ -628,8 +631,7 @@ function salvarPDF(dados) {
   .save()
   .then(() => document.body.removeChild(container))
   .catch(() => document.body.removeChild(container));
-
-}
+}, 300);
 
   // =============================
   // IMPRIMIR — popup isolado
