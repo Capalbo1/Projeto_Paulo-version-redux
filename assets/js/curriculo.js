@@ -352,32 +352,21 @@ function formatarNome(nome){
 }
 
 // Cidade / Estado (ex: tatuí sp → Tatuí - SP)
-function formatarCidade(cidade){
-  function formatarCidade(cidade){
-  if (!cidade) return "";
+function formatarCidade(valor) {
+  if (!valor) return '';
 
-  let partes = cidade
-    .toLowerCase()
-    .replace("-", " ")
-    .split(" ")
-    .filter(p => p);
+  valor = valor.toLowerCase().trim();
 
-  if(partes.length >= 2){
-    const estado = partes.pop().toUpperCase();
-    const cidadeNome = capitalizarTexto(partes.join(" "));
-    return `${cidadeNome} - ${estado}`;
+  let partes = valor.split(/\s+/);
+
+  if (partes.length < 2) {
+    return capitalizarTexto(valor);
   }
 
-  return capitalizarTexto(cidade);
-}
+  const estado = partes.pop().toUpperCase();
+  const cidade = partes.join(' ');
 
-  if(partes.length >= 2){
-    const estado = partes.pop().toUpperCase();
-    const cidadeNome = capitalizarTexto(partes.join(" "));
-    return `${cidadeNome} - ${estado}`;
-  }
-
-  return capitalizarTexto(cidade);
+  return `${capitalizarTexto(cidade)} - ${estado}`;
 }
 
 // Endereço
