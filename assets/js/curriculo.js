@@ -399,7 +399,7 @@ function formatarPeriodo(periodo){
   return periodo.replace(
     /(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\s*\/?\s*(\d{4})/g,
     (_, m, a) => `${meses[m]}/${a}`
-  ).replace(/\s*-\s*/, " – ")
+  ).replace(/\s*-\s*/g, " – ")
 }
 
 // Formação
