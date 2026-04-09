@@ -427,28 +427,45 @@ p{margin:8px 0;color:var(--text)}
   text-align: center;
 }
 
-/* ============ Responsivo ============ */
-@media (max-width: 960px) {
-  .grid4 { grid-template-columns: repeat(2, 1fr); }
-  .about-grid { grid-template-columns: 1fr 1fr; }
-  .actions-row { grid-template-columns: 1fr 1fr; }
-}
-
 @media (max-width: 640px) {
-  /* esconde todos os links do menu... */
+
+  /* Header em duas linhas no mobile */
+  .nav {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 16px;
+  }
+
+  /* Logo ocupa a linha inteira — empurra os links pra baixo */
+  .nav .brand {
+    flex: 1 1 100%;
+  }
+
+  /* Links ficam na segunda linha, centralizados */
+  .nav .links {
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* esconde links de navegação comuns */
   .nav .links a { display: none; }
 
-  /* ...mas mantém visíveis: Começar e o toggle de tema */
-  .nav .links .nav-home { display: inline-block; }
-  .nav .links a.button.primary { display: inline-flex; }
-  .nav .links .theme-toggle { display: inline-block; }
+  /* mantém visíveis: links de ação e tema */
+  .nav .links .nav-home          { display: inline-block; }
+  .nav .links a.button.primary   { display: inline-flex; }
+  .nav .links .theme-switch      { display: inline-flex; }
+  .nav .links .theme-toggle      { display: inline-block; }
 
   /* grids para coluna única */
-  .grid4 { grid-template-columns: 1fr; }
-  .about-grid { grid-template-columns: 1fr; }
-  .actions-row { grid-template-columns: 1fr; }
+  .grid4        { grid-template-columns: 1fr; }
+  .about-grid   { grid-template-columns: 1fr; }
+  .actions-row  { grid-template-columns: 1fr; }
 
-  /* remove divisória neon no mobile (não faz sentido em coluna) */
+  /* divisória mobile */
   .about-item:first-child {
     border-right: none;
     border-bottom: 1px solid transparent;
@@ -463,44 +480,3 @@ p{margin:8px 0;color:var(--text)}
     margin-bottom: 8px;
   }
 }
-
-/* ===========================================================
-   MODAL DE AVISO (centralizado com blur)
-   =========================================================== */
-.alert-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.35);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999;
-  opacity: 0; transition: opacity .18s ease;
-}
-.alert-overlay.show { opacity: 1; }
-
-.alert-modal {
-  width: min(92vw, 480px);
-  background: rgba(243,244,246,.94);
-  color: #111827;
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.24);
-  transform: scale(.98); transition: transform .18s ease;
-  display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start;
-}
-.alert-overlay.show .alert-modal { transform: scale(1); }
-
-:root[data-theme="dark"] .alert-modal {
-  background: rgba(31,41,55,.90);
-  color: #f9fafb;
-  border-color: rgba(255,255,255,.10);
-}
-.alert-modal i { font-size: 22px; margin-top: 2px; }
-.alert-modal .text { font-weight: 700; line-height: 1.35; }
-.alert-modal .close {
-  all: unset; cursor: pointer; font-size: 22px; line-height: 1; padding: 2px 4px;
-}
-
-/* trava rolagem quando o modal está aberto */
-html.modal-open, body.modal-open { overflow: hidden; }
