@@ -466,6 +466,15 @@ function formatarTexto(texto){
   function coletarDados() {
     const get = id => (document.getElementById(id)?.value || "").trim();
 
+
+  // FOTO
+      const fotoInput = document.getElementById("foto");
+      let fotoBase64 = "";
+
+      if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+        fotoBase64 = URL.createObjectURL(fotoInput.files[0]);
+      }
+  // EXPERIÊNCIAS
     const experiencias = [];
     document.querySelectorAll(".exp-item").forEach(item => {
       const empresa   = item.querySelector('[name="empresa"]')?.value?.trim()   || "";
@@ -480,6 +489,7 @@ function formatarTexto(texto){
     });
     });
 
+  // RETORNO FINAL
     return {
       nome: formatarNome(get("nome")),
       email: get("email"),
@@ -491,6 +501,7 @@ function formatarTexto(texto){
       idiomas: formatarIdiomas(get("idiomas")),
       cursos: formatarTexto(get("cursos")),
       extras: formatarTexto(get("extras")),
+      foto: fotoBase64,
       experiencias
     };
   }
@@ -564,8 +575,23 @@ function formatarTexto(texto){
 
     return `
       <div style="${S.root}">
-        <div style="${S.nomeBloco}">
-          <div style="${S.nome}">${d.nome}</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+
+          <div style="${S.nomeBloco}">
+            <div style="${S.nome}">${d.nome}</div>
+          </div>
+
+          ${d.foto ? `
+            <img src="${d.foto}"
+              style="
+                width:110px;
+                height:140px;
+                object-fit:cover;
+                border-radius:6px;
+                border:1px solid #ccc;
+              ">
+          ` : ""}
+
         </div>
         <div style="${S.contatoBloco}">${linhasContato.join("<br>")}</div>
         <hr style="${S.hr}">
