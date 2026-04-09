@@ -335,6 +335,98 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 420);
   }
 
+// =============================
+// FORMATAÇÃO PROFISSIONAL
+// =============================
+
+// Primeira letra maiúscula em cada palavra
+function capitalizarTexto(texto){
+  return texto
+    .toLowerCase()
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+// Nome (cada palavra)
+function formatarNome(nome){
+  return capitalizarTexto(nome.trim());
+}
+
+// Cidade / Estado (ex: tatuí sp → Tatuí - SP)
+function formatarCidade(cidade){
+  function formatarCidade(cidade){
+  if (!cidade) return "";
+
+  let partes = cidade
+    .toLowerCase()
+    .replace("-", " ")
+    .split(" ")
+    .filter(p => p);
+
+  if(partes.length >= 2){
+    const estado = partes.pop().toUpperCase();
+    const cidadeNome = capitalizarTexto(partes.join(" "));
+    return `${cidadeNome} - ${estado}`;
+  }
+
+  return capitalizarTexto(cidade);
+}
+
+  if(partes.length >= 2){
+    const estado = partes.pop().toUpperCase();
+    const cidadeNome = capitalizarTexto(partes.join(" "));
+    return `${cidadeNome} - ${estado}`;
+  }
+
+  return capitalizarTexto(cidade);
+}
+
+// Endereço
+function formatarEndereco(endereco){
+  return capitalizarTexto(endereco);
+}
+
+// Período (ex: jan2022 dez2024 → Jan/2022 – Dez/2024)
+function formatarPeriodo(periodo){
+
+  periodo = periodo.toLowerCase();
+
+  const meses = {
+    jan: "Jan", fev: "Fev", mar: "Mar", abr: "Abr",
+    mai: "Mai", jun: "Jun", jul: "Jul", ago: "Ago",
+    set: "Set", out: "Out", nov: "Nov", dez: "Dez"
+  };
+
+  return periodo.replace(
+    /(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\s*\/?\s*(\d{4})/g,
+    (_, m, a) => `${meses[m]}/${a}`
+  ).replace(/\s*-\s*/, " – ")
+}
+
+// Formação
+function formatarFormacao(texto){
+  return capitalizarTexto(texto);
+}
+
+// Idiomas (adiciona nível automático)
+function formatarIdiomas(texto){
+
+  return texto.split(",").map(i => {
+    i = capitalizarTexto(i.trim());
+
+    if(!i.includes("(")){
+      return `${i} (Intermediário)`;
+    }
+
+    return i;
+  }).join(", ");
+}
+
+// Texto geral
+function formatarTexto(texto){
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
   // =============================
   // SUBMIT — SALVAR PDF
   // =============================
@@ -370,20 +462,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const cargo     = item.querySelector('[name="cargo"]')?.value?.trim()     || "";
       const periodo   = item.querySelector('[name="periodo"]')?.value?.trim()   || "";
       const descricao = item.querySelector('[name="descricao"]')?.value?.trim() || "";
-      if (empresa || cargo) experiencias.push({ empresa, cargo, periodo, descricao });
+      if (empresa || cargo) experiencias.push({
+      empresa: capitalizarTexto(empresa),
+      cargo: capitalizarTexto(cargo),
+      periodo: formatarPeriodo(periodo),
+      descricao: formatarTexto(descricao)
+    });
     });
 
     return {
-      nome:       get("nome"),
-      email:      get("email"),
-      telefone:   get("telefone"),
-      cidade:     get("cidade"),
-      endereco:   get("endereco"),
-      objetivo:   get("objetivo"),
-      formacao:   get("formacao"),
-      idiomas:    get("idiomas"),
-      cursos:     get("cursos"),
-      extras:     get("extras"),
+      nome: formatarNome(get("nome")),
+      email: get("email"),
+      telefone: get("telefone"),
+      cidade: formatarCidade(get("cidade")),
+      endereco: formatarEndereco(get("endereco")),
+      objetivo: formatarTexto(get("objetivo")),
+      formacao: formatarFormacao(get("formacao")),
+      idiomas: formatarIdiomas(get("idiomas")),
+      cursos: formatarTexto(get("cursos")),
+      extras: formatarTexto(get("extras")),
       experiencias
     };
   }
@@ -514,7 +611,9 @@ function salvarPDF(dados) {
   container.style.top = "0";
   container.style.width = "794px";
   container.style.background = "#fff";
-  container.style.zIndex = "-1";
+  container.style.zIndex = "9999";
+  container.style.opacity = "0";
+  container.style.pointerEvents = "none";
 
   container.innerHTML = cvHTML;
   document.body.appendChild(container);

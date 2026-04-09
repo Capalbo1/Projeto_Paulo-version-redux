@@ -645,6 +645,23 @@ h2.etapa-visivel i {
   box-shadow: 0 5px 20px rgba(0,200,160,.38);
 }
 
+.site-footer{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  background: var(--card);
+  border-top: 1px solid var(--border);
+
+  z-index: 50;
+}
+
+/* evita conteúdo ficar escondido atrás */
+main.container{
+  padding-bottom: 80px;
+}
+
 /* -----------------------------------------------
    RESPONSIVO
 ----------------------------------------------- */
