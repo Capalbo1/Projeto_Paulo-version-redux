@@ -396,17 +396,38 @@ function formatarFormacao(texto){
   return capitalizarTexto(texto);
 }
 
-// Idiomas (adiciona nível automático)
+// Idiomas (formatação automática)
 function formatarIdiomas(texto){
+  if (!texto) return "";
 
   return texto.split(",").map(i => {
-    i = capitalizarTexto(i.trim());
 
-    if(!i.includes("(")){
-      return `${i} (Intermediário)`;
-    }
+    let item = i.trim().toLowerCase();
 
-    return i;
+    // normaliza acentos bagunçados (ex: avancado, intermedario etc)
+    item = item
+      .replace(/avancado/g, "avançado")
+      .replace(/intermediario/g, "intermediário")
+      .replace(/basico/g, "básico");
+
+    // detecta nível
+    let nivel = "";
+    if (item.includes("avançado")) nivel = "Avançado";
+    else if (item.includes("intermediário")) nivel = "Intermediário";
+    else if (item.includes("básico")) nivel = "Básico";
+
+    // remove o nível do texto principal
+    let idioma = item
+      .replace("avançado", "")
+      .replace("intermediário", "")
+      .replace("básico", "")
+      .trim();
+
+    idioma = capitalizarTexto(idioma);
+
+    // monta saída
+    return nivel ? `${idioma} (${nivel})` : idioma;
+
   }).join(", ");
 }
 
