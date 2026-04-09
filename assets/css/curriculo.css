@@ -662,6 +662,18 @@ main.container{
   padding-bottom: 80px;
 }
 
+.aviso-impressao {
+  text-align: center;
+  font-size: 0.82rem;
+  color: #4da6ff;
+  margin-top: 10px;
+  opacity: 0.85;
+}
+
+.aviso-impressao i {
+  margin-right: 5px;
+}
+
 /* -----------------------------------------------
    RESPONSIVO
 ----------------------------------------------- */
