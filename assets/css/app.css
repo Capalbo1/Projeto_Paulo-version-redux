@@ -386,26 +386,88 @@ p{margin:8px 0;color:var(--text)}
   box-shadow: 0 12px 26px rgba(0,0,0,.22);
 }
 
-/* ============ Responsivo ============ */
-@media (max-width:960px){
-  .grid4{ grid-template-columns: repeat(2,1fr); }
+/* ============ Sobre: duas colunas + divisória neon ============ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  align-items: start;
 }
-@media (max-width:640px){
+.about-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 28px;
+}
+.about-item:first-child {
+  border-right: 1px solid transparent;
+  border-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--accent) 20%,
+    var(--accent) 80%,
+    transparent 100%
+  ) 1;
+}
+
+/* ============ Actions row: cards enfileirados ============ */
+.actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+
+/* ============ Responsivo ============ */
+@media (max-width: 960px) {
+  .grid4 { grid-template-columns: repeat(2, 1fr); }
+  .about-grid { grid-template-columns: 1fr 1fr; }
+  .actions-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
   /* esconde todos os links do menu... */
-  .nav .links a{ display: none; }
+  .nav .links a { display: none; }
 
-  /* ...mas mantém visíveis: Início, Começar e o toggle de tema */
-  .nav .links .nav-home{ display: inline-block; }
-  .nav .links a.button.primary{ display: inline-flex; } /* âncora do CTA "Começar" */
-  .nav .links .theme-toggle{ display: inline-block; }
+  /* ...mas mantém visíveis: Começar e o toggle de tema */
+  .nav .links .nav-home { display: inline-block; }
+  .nav .links a.button.primary { display: inline-flex; }
+  .nav .links .theme-toggle { display: inline-block; }
 
-  .grid4{ grid-template-columns: 1fr; }
+  /* grids para coluna única */
+  .grid4 { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .actions-row { grid-template-columns: 1fr; }
+
+  /* remove divisória neon no mobile (não faz sentido em coluna) */
+  .about-item:first-child {
+    border-right: none;
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(
+      to right,
+      transparent 0%,
+      var(--accent) 30%,
+      var(--accent) 70%,
+      transparent 100%
+    ) 1;
+    padding-bottom: 24px;
+    margin-bottom: 8px;
+  }
 }
 
 /* ===========================================================
    MODAL DE AVISO (centralizado com blur)
    =========================================================== */
-.alert-overlay{
+.alert-overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.35);
   backdrop-filter: blur(3px);
@@ -414,11 +476,11 @@ p{margin:8px 0;color:var(--text)}
   z-index: 9999;
   opacity: 0; transition: opacity .18s ease;
 }
-.alert-overlay.show{ opacity: 1; }
+.alert-overlay.show { opacity: 1; }
 
-.alert-modal{
+.alert-modal {
   width: min(92vw, 480px);
-  background: rgba(243,244,246,.94);   /* cinza claro translúcido */
+  background: rgba(243,244,246,.94);
   color: #111827;
   border: 1px solid rgba(0,0,0,.08);
   border-radius: 14px;
@@ -427,18 +489,18 @@ p{margin:8px 0;color:var(--text)}
   transform: scale(.98); transition: transform .18s ease;
   display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start;
 }
-.alert-overlay.show .alert-modal{ transform: scale(1); }
+.alert-overlay.show .alert-modal { transform: scale(1); }
 
-:root[data-theme="dark"] .alert-modal{
-  background: rgba(31,41,55,.90);      /* cinza escuro translúcido */
+:root[data-theme="dark"] .alert-modal {
+  background: rgba(31,41,55,.90);
   color: #f9fafb;
   border-color: rgba(255,255,255,.10);
 }
-.alert-modal i{ font-size: 22px; margin-top: 2px; }
-.alert-modal .text{ font-weight: 700; line-height: 1.35; }  /* texto em bold */
-.alert-modal .close{
+.alert-modal i { font-size: 22px; margin-top: 2px; }
+.alert-modal .text { font-weight: 700; line-height: 1.35; }
+.alert-modal .close {
   all: unset; cursor: pointer; font-size: 22px; line-height: 1; padding: 2px 4px;
 }
 
 /* trava rolagem quando o modal está aberto */
-html.modal-open, body.modal-open{ overflow: hidden; }
+html.modal-open, body.modal-open { overflow: hidden; }

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Criar Currículo – DISC</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="shortcut icon" href="assets/imagens/icons8-teste-96.png" type="image/x-icon">
+
+  <link rel="stylesheet" href="assets/css/app.css?v=13">
+  <link rel="stylesheet" href="assets/css/curriculo.css">
+
+  <script defer src="assets/js/app.js?v=3"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script defer src="assets/js/curriculo.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/imagens/logo_disc.png" alt="DISC" class="brand-img">
+    </a>
+    <nav class="links">
+      <a href="index.html">Início</a>
+      <a href="index.html#sobre">Sobre</a>
+      <a href="index.html#politica">Política</a>
+      <a class="button primary" href="consentimento.html">Teste DISC</a>
+      <div class="theme-switch">
+        <span class="theme-label">Tema</span>
+        <button class="theme-toggle" id="themeToggle">🌗</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="card center">
+    <h1>Criar Currículo Profissional</h1>
+    <p>
+      Preencha as informações abaixo para gerar seu currículo no modelo
+      <strong>Robert Half</strong> — formatação clássica, pronto para PDF e impressão.
+    </p>
+    <p class="note">
+      Adaptado pelo <strong>Prof. Me. Paulo Rubens Rocha Albino</strong> ·
+      Seus dados não são armazenados.
+    </p>
+  </section>
+
+  <!-- FORMULÁRIO -->
+  <section class="card">
+    <form id="form-curriculo" class="form">
+
+      <!-- DADOS PESSOAIS -->
+      <h2><i class="fa-solid fa-user"></i> Dados Pessoais</h2>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Nome Completo *</label>
+          <input type="text" id="nome" placeholder="Ex: João da Silva" required>
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input type="email" id="email" placeholder="voce@email.com" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Telefone *</label>
+          <input type="text" id="telefone" placeholder="(11) 9 0000-0000" required>
+        </div>
+        <div class="field">
+          <label>Cidade / Estado *</label>
+          <input type="text" id="cidade" placeholder="Ex: Tatuí – SP" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Endereço <span style="font-weight:400;opacity:.7">(opcional)</span></label>
+        <input type="text" id="endereco" placeholder="Ex: Rua das Flores, 123 – Centro">
+      </div>
+
+      <!-- OBJETIVO -->
+      <h2><i class="fa-solid fa-bullseye"></i> Objetivo Profissional</h2>
+
+      <div class="field">
+        <textarea id="objetivo" rows="4"
+          placeholder="Ex: Atuar na área de tecnologia, contribuindo com minha experiência em gestão de projetos e desenvolvimento de sistemas..." required></textarea>
+      </div>
+
+      <!-- EXPERIÊNCIA -->
+      <h2><i class="fa-solid fa-briefcase"></i> Experiência Profissional</h2>
+
+      <div id="experiencias">
+        <div class="exp-item">
+          <div class="field-row">
+            <div class="field">
+              <label>Empresa</label>
+              <input type="text" name="empresa" placeholder="Nome da empresa">
+            </div>
+            <div class="field">
+              <label>Cargo</label>
+              <input type="text" name="cargo" placeholder="Ex: Analista de TI">
+            </div>
+          </div>
+          <div class="field">
+            <label>Período</label>
+            <input type="text" name="periodo" placeholder="Ex: Jan/2022 – Dez/2024">
+          </div>
+          <div class="field">
+            <label>Descrição das atividades</label>
+            <textarea name="descricao" rows="3"
+              placeholder="Descreva suas principais responsabilidades e conquistas..."></textarea>
+          </div>
+        </div>
+      </div>
+
+<button type="button" class="button ghost" id="add-exp">
+  <i class="fa-solid fa-plus"></i> Adicionar experiência
+</button>
+
+      <!-- FORMAÇÃO -->
+      <h2><i class="fa-solid fa-graduation-cap"></i> Formação Acadêmica</h2>
+
+      <div class="field">
+        <input type="text" id="formacao"
+          placeholder="Ex: Gestão da Tecnologia da Informação – FATEC Tatuí – 2025">
+      </div>
+
+      <!-- IDIOMAS -->
+      <h2><i class="fa-solid fa-globe"></i> Idiomas</h2>
+
+      <div class="field">
+        <input type="text" id="idiomas"
+          placeholder="Ex: Inglês (Avançado), Espanhol (Intermediário)">
+      </div>
+
+      <!-- CURSOS -->
+      <h2><i class="fa-solid fa-certificate"></i> Cursos Extras</h2>
+
+      <div class="field">
+        <input type="text" id="cursos"
+          placeholder="Ex: Excel Avançado, Power BI, Gestão de Projetos">
+      </div>
+
+      <!-- INFORMAÇÕES ADICIONAIS -->
+      <h2><i class="fa-solid fa-circle-info"></i> Informações Adicionais</h2>
+
+      <div class="field">
+        <textarea id="extras" rows="3"
+          placeholder="Outras informações relevantes, habilidades, CNH, disponibilidade para outras cidades, estados ou países, voluntariado..."></textarea>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="cta-row">
+        <button type="submit" class="button primary">
+          <i class="fa-solid fa-file-lines"></i> Gerar Currículo
+        </button>
+        <button type="button" class="button primary" id="btn-imprimir">
+          <i class="fa-solid fa-print"></i> Imprimir
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- PREVIEW (gerado via JS) -->
+  <div class="cv-preview" id="cv-preview"></div>
+
+  <button id="backToTop" class="back-to-top" aria-label="Voltar ao topo">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+</main>
+
+<footer class="site-footer">
+  <div>
+    <span>© CRV Soluções em T.I</span>
+    <span class="sep">·</span>
+    <span>Currículo modelo Robert Half · Adaptado pelo Prof. Me. Paulo Rubens Rocha Albino</span>
+  </div>
+</footer>
+
+</body>
+</html>

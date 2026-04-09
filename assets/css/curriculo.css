@@ -1,0 +1,675 @@
+/* =========================================================
+   CURRICULO PAGE — padrão CRV
+   ========================================================= */
+
+/* ===== Hero ===== */
+.cv-hero h1 { font-size: 1.8rem; }
+.cv-hero .note { opacity: .75; font-size: .9rem; }
+
+/* ===== Form ===== */
+#form-curriculo {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ===== Seções (h2 como separador visual) ===== */
+#form-curriculo h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+  border-bottom: 2px solid color-mix(in oklab, var(--accent) 35%, transparent);
+  padding-bottom: 6px;
+  margin-top: 28px;
+  margin-bottom: 4px;
+}
+
+/* ===== Grid de campos lado a lado ===== */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field-row.triple {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ===== Campo individual ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.field label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ===== Inputs ===== */
+#form-curriculo input,
+#form-curriculo textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--bg) 92%, white 8%);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+#form-curriculo input:focus,
+#form-curriculo textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+#form-curriculo textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* ===== Bloco de experiência ===== */
+.exp-item {
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card) 80%, var(--bg) 20%);
+  margin-bottom: 12px;
+  position: relative;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.exp-item:hover {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--border) 60%);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+}
+
+.exp-item hr {
+  display: none;
+}
+
+/* ===== Botão adicionar ===== */
+#add-exp {
+  margin-top: 4px;
+  border-style: dashed;
+  opacity: .8;
+  transition: opacity .2s ease;
+}
+
+#add-exp:hover { opacity: 1; }
+
+/* ===== Ações finais ===== */
+.cta-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== Preview PDF ===== */
+.cv-preview {
+  margin-top: 24px;
+  padding: 40px 48px;
+  background: #ffffff;
+  color: #111;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: none;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.cv-preview h1 {
+  font-size: 20px;
+  font-family: inherit;
+  margin-bottom: 6px;
+  color: #003366;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.cv-preview h2 {
+  font-size: 11px;
+  font-family: inherit;
+  margin-top: 18px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-bottom: 1px solid #003366;
+  padding-bottom: 3px;
+  color: #003366;
+}
+
+.cv-preview p {
+  font-size: 11pt;
+  text-align: justify;
+  margin: 5px 0;
+  color: #111;
+}
+
+.cv-preview ul {
+  font-size: 11pt;
+  padding-left: 18px;
+  color: #111;
+}
+
+.cv-divider {
+  height: 1px;
+  background: #ccc;
+  margin: 10px 0;
+}
+
+/* ============================================================
+   ANIMAÇÕES DE REVELAÇÃO PROGRESSIVA
+   ============================================================ */
+
+/* Títulos de seção — entram deslizando */
+.section-title {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+
+.section-title.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Blocos de campos — entram logo após o título */
+.fade-in {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .4s ease, transform .4s ease;
+  /* Garante que o espaço não é reservado antes de mostrar */
+  pointer-events: none;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* O card do formulário não tem altura mínima forçada
+   para não "abrir" antes das seções aparecerem */
+#form-curriculo {
+  /* já definido acima — apenas garantia */
+  overflow: visible;
+}
+
+/* ============================================================
+   ESTILOS DO CURRÍCULO GERADO (preview + print)
+   ============================================================ */
+
+.cv-root {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10.5pt;
+  color: #111;
+  line-height: 1.55;
+  padding: 36pt 48pt;
+}
+
+.cv-name {
+  font-size: 16pt;
+  font-weight: bold;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cv-contact {
+  font-size: 9pt;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.cv-divider {
+  height: 1px;
+  background: #ccc;
+  margin: 6px 0;
+}
+
+.cv-divider--heavy {
+  height: 2px;
+  background: #003366;
+  margin: 8px 0 14px;
+}
+
+.cv-section {
+  margin-bottom: 14pt;
+}
+
+.cv-title {
+  font-size: 8.5pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #003366;
+  margin-bottom: 4px;
+}
+
+.cv-text {
+  font-size: 10.5pt;
+  text-align: justify;
+  margin: 4px 0;
+  color: #111;
+}
+
+.cv-exp {
+  margin-bottom: 10pt;
+}
+
+.cv-exp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: bold;
+  font-size: 10.5pt;
+}
+
+.cv-exp-periodo {
+  font-weight: normal;
+  color: #555;
+  font-size: 9.5pt;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.cv-exp-company {
+  font-style: italic;
+  font-size: 10pt;
+  color: #333;
+  margin: 2px 0 4px;
+}
+
+.cv-list {
+  margin: 4px 0 0 16px;
+  padding: 0;
+  font-size: 10pt;
+  color: #222;
+}
+
+.cv-list li {
+  margin-bottom: 2px;
+  text-align: justify;
+}
+
+/* ============================================================
+   IMPRESSÃO — esconde tudo exceto o preview
+   ============================================================ */
+@media print {
+  body > * { display: none !important; }
+  #cv-preview {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    opacity: 1 !important;
+  }
+  .cv-root { padding: 0; }
+}
+
+/* =============================================
+   CURRICULO — ANIMAÇÕES + EXPERIÊNCIAS + REVISÃO
+   Não altera cores, fundos, cards ou layout base.
+   ============================================= */
+
+/* -----------------------------------------------
+   REVELAÇÃO PROGRESSIVA — campos individuais
+   O card pai cresce conforme os filhos aparecem.
+----------------------------------------------- */
+.etapa-campo {
+  overflow: hidden;
+  transition:
+    max-height     .44s cubic-bezier(.4, 0, .2, 1),
+    opacity        .36s ease,
+    transform      .36s ease,
+    margin-top     .44s ease,
+    margin-bottom  .44s ease,
+    padding-top    .44s ease,
+    padding-bottom .44s ease;
+}
+
+.etapa-oculta {
+  max-height:     0 !important;
+  opacity:        0;
+  transform:      translateY(10px);
+  pointer-events: none;
+  margin-top:     0 !important;
+  margin-bottom:  0 !important;
+  padding-top:    0 !important;
+  padding-bottom: 0 !important;
+}
+
+.etapa-visivel {
+  max-height:     640px;
+  opacity:        1;
+  transform:      translateY(0);
+  pointer-events: auto;
+}
+
+/* Títulos h2 — altura menor */
+h2.etapa-campo.etapa-visivel,
+.section-title.etapa-campo.etapa-visivel {
+  max-height: 80px;
+}
+
+/* Bloco de experiência embutido no form */
+.exp-item.etapa-campo.etapa-visivel {
+  max-height: 1000px;
+}
+
+/* Saída suave */
+.etapa-saindo {
+  max-height:     0 !important;
+  opacity:        0;
+  transform:      translateY(-8px) scale(.97);
+  pointer-events: none;
+  overflow:       hidden;
+  margin-top:     0 !important;
+  margin-bottom:  0 !important;
+  padding-top:    0 !important;
+  padding-bottom: 0 !important;
+  transition: max-height .35s ease, opacity .3s ease, transform .3s ease;
+}
+
+/* -----------------------------------------------
+   TÍTULOS — TEMA ESCURO / CLARO
+----------------------------------------------- */
+.dark h2,
+.dark .section-title,
+[data-theme="dark"] h2,
+[data-theme="dark"] .section-title {
+  color: #00c8f0;
+}
+
+.dark .field label,
+[data-theme="dark"] .field label {
+  color: #ffffff;
+}
+
+.light h2,
+.light .section-title,
+[data-theme="light"] h2,
+[data-theme="light"] .section-title {
+  color: #1a3fa8;
+}
+
+.light .field label,
+[data-theme="light"] .field label {
+  color: #111111;
+}
+
+/* -----------------------------------------------
+   ÍCONES dentro de h2
+----------------------------------------------- */
+h2 .icon, h2 svg, h2 i {
+  opacity:   0;
+  transform: scale(.6) rotate(-15deg);
+  transition: opacity .45s ease .1s, transform .45s cubic-bezier(.34,1.56,.64,1) .1s;
+  display:   inline-block;
+}
+h2.etapa-visivel .icon,
+h2.etapa-visivel svg,
+h2.etapa-visivel i {
+  opacity:   1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* -----------------------------------------------
+   FOCUS NOS INPUTS — glow sutil
+----------------------------------------------- */
+#form-curriculo input:focus,
+#form-curriculo textarea:focus,
+#form-curriculo select:focus {
+  box-shadow: 0 0 0 2px rgba(0,200,240,.15), 0 0 14px rgba(0,200,240,.08);
+  transition: box-shadow .22s ease;
+}
+
+/* -----------------------------------------------
+   CAMPO INVÁLIDO — borda vermelha + shake
+----------------------------------------------- */
+.campo-erro {
+  border-color: #ff4566 !important;
+  box-shadow:   0 0 0 3px rgba(255,69,102,.2) !important;
+  animation:    campo-shake .35s ease;
+}
+
+@keyframes campo-shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-5px); }
+  75%       { transform: translateX(5px); }
+}
+
+/* -----------------------------------------------
+   EXPERIÊNCIAS DINÂMICAS
+   Scroll interno para o bloco não sair da tela.
+----------------------------------------------- */
+
+/* Container pai — sem clip */
+#experiencias {
+  overflow:        visible;
+  display:         flex;
+  flex-direction:  column;
+  gap:             14px;
+}
+
+/* Bloco adicionado dinamicamente:
+   max-height limita a 75% da janela → scroll interno
+   se o conteúdo (campos + textarea) ultrapassar. */
+.exp-item-dinamico {
+  scroll-margin-top: 90px;       /* respeita header fixo */
+  max-height:        75vh;
+  overflow-y:        auto;
+  overflow-x:        hidden;
+  /* scrollbar discreta */
+  scrollbar-width:        thin;
+  scrollbar-color:        rgba(0,200,240,.3) transparent;
+}
+
+.exp-item-dinamico::-webkit-scrollbar {
+  width: 4px;
+}
+.exp-item-dinamico::-webkit-scrollbar-track {
+  background: transparent;
+}
+.exp-item-dinamico::-webkit-scrollbar-thumb {
+  background:    rgba(0,200,240,.3);
+  border-radius: 99px;
+}
+
+/* Header do bloco dinâmico (rótulo + botão ✕) */
+.exp-item .exp-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   14px;
+  /* fica fixo no topo do scroll interno */
+  position:        sticky;
+  top:             0;
+  z-index:         1;
+  padding-bottom:  6px;
+}
+
+.exp-item .exp-label {
+  font-size:      .78rem;
+  font-weight:    700;
+  opacity:        .55;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Botão ✕ cancelar */
+.btn-cancelar-exp {
+  background:    transparent;
+  border:        none;
+  cursor:        pointer;
+  font-size:     1rem;
+  padding:       4px 8px;
+  border-radius: 6px;
+  opacity:       .4;
+  color:         inherit;
+  line-height:   1;
+  transition:    opacity .18s ease, background .18s ease;
+}
+.btn-cancelar-exp:hover {
+  opacity:    1;
+  background: rgba(255,69,102,.12);
+}
+
+/* -----------------------------------------------
+   CARD DE REVISÃO — sugestão, não bloqueio
+----------------------------------------------- */
+#revisao-card {
+  margin:        24px 0 14px;
+  border-radius: 12px;
+  border:        1.5px solid rgba(0,200,240,.3);
+  background:    rgba(0,200,240,.05);
+  padding:       18px 20px;
+  transition:    border-color .3s ease, background .3s ease;
+}
+
+/* Tema claro */
+.light #revisao-card,
+[data-theme="light"] #revisao-card {
+  border-color: rgba(26,63,168,.25);
+  background:   rgba(26,63,168,.04);
+}
+
+/* Card dispensado — colapsa suavemente */
+#revisao-card.revisao-dispensada {
+  opacity:        0;
+  transform:      translateY(-8px);
+  max-height:     0;
+  margin:         0;
+  padding:        0;
+  overflow:       hidden;
+  pointer-events: none;
+  transition:
+    opacity    .35s ease,
+    transform  .35s ease,
+    max-height .45s ease .1s,
+    margin     .45s ease .1s,
+    padding    .45s ease .1s;
+}
+
+.revisao-inner {
+  display:        flex;
+  flex-direction: column;
+  gap:            12px;
+}
+
+.revisao-topo {
+  display:     flex;
+  align-items: flex-start;
+  gap:         12px;
+}
+
+.revisao-icone {
+  font-size:  1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.revisao-texto {
+  display:        flex;
+  flex-direction: column;
+  gap:            3px;
+}
+
+.revisao-texto strong {
+  font-size: .92rem;
+}
+
+.revisao-texto span {
+  font-size: .8rem;
+  opacity:   .65;
+}
+
+.revisao-acoes {
+  display:   flex;
+  gap:       10px;
+  flex-wrap: wrap;
+}
+
+/* Botão "Sim, revisar" */
+#btn-revisar {
+  background:    transparent;
+  border:        1.5px solid currentColor;
+  border-radius: 8px;
+  padding:       7px 16px;
+  font-size:     .82rem;
+  font-weight:   600;
+  cursor:        pointer;
+  opacity:       .7;
+  color:         inherit;
+  transition:    opacity .18s ease, background .18s ease;
+}
+#btn-revisar:hover {
+  opacity:    1;
+  background: rgba(128,128,128,.1);
+}
+
+/* Botão "Não, está tudo certo" */
+#btn-pular-revisao {
+  background:    linear-gradient(135deg, #00c8a0, #0090c8);
+  border:        none;
+  border-radius: 8px;
+  padding:       7px 18px;
+  font-size:     .82rem;
+  font-weight:   700;
+  color:         #fff;
+  cursor:        pointer;
+  box-shadow:    0 3px 14px rgba(0,200,160,.22);
+  transition:    box-shadow .2s ease, filter .2s ease;
+}
+#btn-pular-revisao:hover {
+  filter:     brightness(1.1);
+  box-shadow: 0 5px 20px rgba(0,200,160,.38);
+}
+
+/* -----------------------------------------------
+   RESPONSIVO
+----------------------------------------------- */
+@media (max-width: 768px) {
+  .exp-item-dinamico {
+    max-height: 80vh; /* um pouco mais de espaço em telas médias */
+  }
+}
+
+@media (max-width: 640px) {
+  .etapa-visivel { max-height: 800px; }
+
+  h2.etapa-campo.etapa-visivel,
+  .section-title.etapa-campo.etapa-visivel { max-height: 100px; }
+
+  .exp-item.etapa-campo.etapa-visivel { max-height: 1200px; }
+
+  .exp-item-dinamico {
+    max-height:  85vh;
+    scroll-margin-top: 70px;
+  }
+
+  .revisao-inner { gap: 10px; }
+  .revisao-acoes { flex-direction: column; }
+
+  #btn-revisar,
+  #btn-pular-revisao { width: 100%; text-align: center; }
+}

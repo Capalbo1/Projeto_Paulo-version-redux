@@ -42,17 +42,20 @@
       <img src="assets/imagens/logo_disc.png" alt="DISC" class="brand-img">
     </a>
 
-    <nav class="links">
-      <a href="index.html#sobre">Sobre</a>
-      <a href="index.html#professor">Desenvolvedor</a>
-      <a href="index.html#politica">Política</a>
-      <a class="button primary" href="consentimento.html">Começar</a>
+  <nav class="links">
+    <a href="index.html#sobre">Sobre</a>
+    <a href="index.html#sobre">Desenvolvedor</a>
+    <a href="index.html#politica">Política</a>
 
-      <div class="theme-switch">
-        <span class="theme-label">Tema</span>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema">🌗</button>
-      </div>
-    </nav>
+    <a href="curriculo.html">Currículo</a>
+
+    <a class="button primary" href="consentimento.html">Começar</a>
+
+    <div class="theme-switch">
+      <span class="theme-label">Tema</span>
+      <button class="theme-toggle" id="themeToggle">🌗</button>
+    </div>
+  </nav>
   </div>
 </header>
 
@@ -67,23 +70,7 @@
     </div>
   </section>
 
-    <!-- Sobre o desenvolvedor -->
-  <section id="professor" class="card center">
-    <h2>Sobre o desenvolvedor</h2>
-    <p>Conteúdo do teste adaptado pelo <strong>Prof. Me. Paulo Rubens Rocha Albino</strong>,
-       na disciplina de <em>Gestão de Pessoas/ambientes corporativos</em>.</p>
-
-    <div class="figure">
-      <a class="img-link"
-         href="https://www.linkedin.com/in/prof-me-paulo-rubens-rocha-albino/"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="LinkedIn do Prof. Paulo Rubens Rocha Albino">
-        <img src="assets/imagens/foto2.jpeg" alt="Prof. Paulo Rubens Rocha Albino" class="avatar-round">
-      </a>
-    </div>
-  </section>
-
-  <!-- O que é o DISC -->
+    <!-- O que é o DISC -->
   <section id="o-que-e" class="card center">
     <h2>O que é o DISC?</h2>
     <p>DISC é um modelo de <strong>tendências comportamentais</strong>. Ele não “rotula” nem
@@ -113,7 +100,7 @@
     ou psicológica</u> e não substitui acompanhamento profissional.</p>
   </section>
 
-  <!-- Como funciona -->
+    <!-- Como funciona -->
   <section id="como-funciona" class="card center">
     <h2>Como funciona</h2>
     <ol class="steps">
@@ -124,22 +111,52 @@
     </ol>
   </section>
 
-  <!-- Sobre a plataforma -->
-  <section id="sobre" class="card center">
-    <h2>Sobre a plataforma</h2>
-    <p>Desenvolvida pela <strong>CRV Soluções em T.I</strong> para aplicação do teste DISC em
-       contexto acadêmico e corporativo. Interface responsiva, rápida e preparada para
-       turmas e relatórios.</p>
+<!-- Sobre (Professor + Plataforma juntos) -->
+<section id="sobre" class="card">
+  <div class="about-grid">
 
-    <div class="figure">
-      <a class="img-link"
-         href="https://crvsolucoesti.com"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="Site da CRV Soluções em TI">
-        <img src="assets/imagens/logo1.png" alt="CRV Soluções em TI" class="about-logo">
-      </a>
+    <!-- PROFESSOR -->
+    <div class="about-item">
+      <h2>Sobre o desenvolvedor</h2>
+      <p>
+        Conteúdo do teste adaptado pelo
+        <strong>Prof. Me. Paulo Rubens Rocha Albino</strong>,
+        na disciplina de <em>Gestão de Pessoas/ambientes corporativos</em>.
+      </p>
+
+      <div class="figure">
+        <a class="img-link"
+           href="https://www.linkedin.com/in/prof-me-paulo-rubens-rocha-albino/"
+           target="_blank" rel="noopener noreferrer">
+          <img src="assets/imagens/foto2.jpeg"
+               alt="Prof. Paulo Rubens Rocha Albino"
+               class="avatar-round">
+        </a>
+      </div>
     </div>
-  </section>
+
+    <!-- EMPRESA -->
+    <div class="about-item">
+      <h2>Sobre a plataforma</h2>
+      <p>
+        Desenvolvida pela <strong>CRV Soluções em T.I</strong> para aplicação do teste DISC
+        em contexto acadêmico e corporativo. Interface responsiva, rápida e preparada
+        para turmas e relatórios.
+      </p>
+
+      <div class="figure">
+        <a class="img-link"
+           href="https://crvsolucoesti.com"
+           target="_blank" rel="noopener noreferrer">
+          <img src="assets/imagens/logo1.png"
+               alt="CRV Soluções em TI"
+               class="about-logo">
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   <!-- Política -->
   <section id="politica" class="card center">
@@ -150,6 +167,16 @@
     <p>Teoria DISC (Marston, 1928) é domínio público.✅</p>
     <a class="button primary" href="consentimento.html">Concordo e quero iniciar</a>
   </section>
+
+  <section class="card action-card center">
+  <h3>Criar Currículo</h3>
+  <p>
+    Monte seu currículo profissional no modelo <strong>Robert Half</strong> —
+    formatação clássica, pronto para PDF e impressão.
+  </p>
+  <p class="note">Adaptado pelo Prof. Me. Paulo Rubens Rocha Albino · Seus dados não são armazenados.</p>
+  <a href="curriculo.html" class="button primary">Criar Currículo</a>
+</section>
 
   <!-- Botão flutuante: Voltar ao topo -->
   <button id="backToTop" class="back-to-top" aria-label="Voltar ao topo">
