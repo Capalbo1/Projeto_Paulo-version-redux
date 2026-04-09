@@ -654,6 +654,8 @@ function salvarPDF(dados) {
   .catch(() => document.body.removeChild(container));
 }, 300);
 
+}
+
   // =============================
   // IMPRIMIR — popup isolado
   // =============================
