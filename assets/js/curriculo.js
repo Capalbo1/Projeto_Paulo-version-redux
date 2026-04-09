@@ -616,16 +616,17 @@ function salvarPDF(dados) {
   const cvHTML = montarCurriculo(dados);
 
   const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.left = "0";
+
+  container.style.position = "absolute";
   container.style.top = "0";
+  container.style.left = "0";
   container.style.width = "794px";
   container.style.background = "#fff";
   container.style.zIndex = "9999";
   container.style.opacity = "1";
-  container.style.position = "fixed";
-  container.style.left = "-9999px";
+  container.style.visibility = "visible";
   container.style.pointerEvents = "none";
+  container.style.transform = "none";
 
   container.innerHTML = cvHTML;
   document.body.appendChild(container);
@@ -633,27 +634,34 @@ function salvarPDF(dados) {
   const nomeSafe = dados.nome.replace(/\s+/g, "-").toLowerCase();
 
   setTimeout(() => {
-  html2pdf().set({
-    margin: [12, 18, 12, 18],
-    filename: `curriculo-${nomeSafe}.pdf`,
-    image: { type: "jpeg", quality: 1 },
-    html2canvas: {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: "#ffffff"
-    },
-    jsPDF: {
-      unit: "mm",
-      format: "a4",
-      orientation: "portrait"
-    }
-  })
-  .from(container)
-  .save()
-  .then(() => document.body.removeChild(container))
-  .catch(() => document.body.removeChild(container));
-}, 300);
 
+    html2pdf().set({
+      margin: [12, 18, 12, 18],
+      filename: `curriculo-${nomeSafe}.pdf`,
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: true
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait"
+      }
+    })
+    .from(container)
+    .save()
+    .then(() => {
+      document.body.removeChild(container);
+    })
+    .catch((err) => {
+      console.error("Erro ao gerar PDF:", err);
+      document.body.removeChild(container);
+    });
+
+  }, 300);
 }
 
   // =============================
