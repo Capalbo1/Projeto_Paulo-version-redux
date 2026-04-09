@@ -512,23 +512,23 @@ function formatarTexto(texto){
   // =============================
   function montarCurriculo(d) {
 
-    const S = {
-      root:          "font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#1a1a1a;line-height:1.6;max-width:750px;margin:0 auto;padding:40px 48px;background:#fff;",
-      nomeBloco: "text-align:left;margin-bottom:6px;",
-      nome:          "font-size:20pt;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:.04em;",
-      contatoBloco: "text-align:left;font-size:9.5pt;color:#444;line-height:1.8;margin-bottom:14px;",
-      contatoLabel:  "font-weight:700;color:#222;",
-      hr:            "border:none;border-top:2px solid #111;margin:16px 0 20px;",
-      secaoTitulo:   "font-size:10pt;font-weight:700;color:#111;text-transform:uppercase;letter-spacing:.1em;border-bottom:1.5px solid #bbb;padding-bottom:3px;margin:22px 0 10px;",
-      texto:         "font-size:10.5pt;color:#222;text-align:justify;margin:0 0 4px;",
-      objetivo:      "font-size:10.5pt;color:#222;margin:0 0 4px;text-align:justify;",
-      expBloco:      "margin-bottom:16px;",
-      expTitulo:     "font-size:10.5pt;font-weight:700;color:#111;margin:0 0 2px;",
-      expPeriodo:    "font-size:9.5pt;color:#555;margin:0 0 5px;",
-      ul:            "margin:4px 0 0 0;padding:0;list-style:none;",
-      li:            "font-size:10pt;color:#222;margin-bottom:3px;padding-left:18px;position:relative;",
-      liSeta:        "position:absolute;left:0;top:0;color:#555;font-size:.85em;",
-    };
+const S = {
+  root:         "font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#1a1a1a;line-height:1.6;max-width:750px;width:100%;margin:0 auto;padding:40px 48px;background:#fff;word-break:break-word;overflow-wrap:break-word;",
+  nomeBloco:    "text-align:left;margin-bottom:6px;",
+  nome:         "font-size:20pt;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:.04em;word-break:break-word;",
+  contatoBloco: "text-align:left;font-size:9.5pt;color:#444;line-height:1.8;margin-bottom:14px;word-break:break-word;",
+  contatoLabel: "font-weight:700;color:#222;",
+  hr:           "border:none;border-top:2px solid #111;margin:16px 0 20px;",
+  secaoTitulo:  "font-size:10pt;font-weight:700;color:#111;text-transform:uppercase;letter-spacing:.1em;border-bottom:1.5px solid #bbb;padding-bottom:3px;margin:22px 0 10px;",
+  texto:        "font-size:10.5pt;color:#222;text-align:justify;margin:0 0 4px;word-break:break-word;overflow-wrap:break-word;",
+  objetivo:     "font-size:10.5pt;color:#222;margin:0 0 4px;text-align:justify;word-break:break-word;overflow-wrap:break-word;",
+  expBloco:     "margin-bottom:16px;",
+  expTitulo:    "font-size:10.5pt;font-weight:700;color:#111;margin:0 0 2px;word-break:break-word;",
+  expPeriodo:   "font-size:9.5pt;color:#555;margin:0 0 5px;",
+  ul:           "margin:4px 0 0 0;padding:0;list-style:none;",
+  li:           "font-size:10pt;color:#222;margin-bottom:3px;padding-left:18px;position:relative;word-break:break-word;overflow-wrap:break-word;",
+  liSeta:       "position:absolute;left:0;top:0;color:#555;font-size:.85em;",
+};
 
     function bullets(txt) {
       if (!txt) return "";
@@ -638,56 +638,29 @@ function formatarTexto(texto){
   // SALVAR PDF
   // =============================
 function salvarPDF(dados) {
+  const cvHTML  = montarCurriculo(dados);
+  const docHTML = gerarDocumentoHTML(cvHTML);
 
-  const cvHTML = montarCurriculo(dados);
+  const blob    = new Blob([docHTML], { type: "text/html;charset=utf-8" });
+  const blobURL = URL.createObjectURL(blob);
 
-  const container = document.createElement("div");
+  const aba = window.open(blobURL, "_blank");
 
-  container.style.position = "absolute";
-  container.style.top = "0";
-  container.style.left = "0";
-  container.style.width = "794px";
-  container.style.background = "#fff";
-  container.style.zIndex = "9999";
-  container.style.opacity = "1";
-  container.style.visibility = "visible";
-  container.style.pointerEvents = "none";
-  container.style.transform = "none";
+  if (!aba) {
+    mostrarAlerta("O navegador bloqueou a nova aba. Permita popups para este site.");
+    URL.revokeObjectURL(blobURL);
+    return;
+  }
 
-  container.innerHTML = cvHTML;
-  document.body.appendChild(container);
-
-  const nomeSafe = dados.nome.replace(/\s+/g, "-").toLowerCase();
-
-  setTimeout(() => {
-
-    html2pdf().set({
-      margin: [12, 18, 12, 18],
-      filename: `curriculo-${nomeSafe}.pdf`,
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: true
-      },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "portrait"
-      }
-    })
-    .from(container)
-    .save()
-    .then(() => {
-      document.body.removeChild(container);
-    })
-    .catch((err) => {
-      console.error("Erro ao gerar PDF:", err);
-      document.body.removeChild(container);
-    });
-
-  }, 300);
+  aba.addEventListener("load", () => {
+    setTimeout(() => {
+      aba.print();
+      aba.addEventListener("afterprint", () => {
+        URL.revokeObjectURL(blobURL);
+        aba.close();
+      });
+    }, 400);
+  });
 }
 
   // =============================
