@@ -73,17 +73,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Destaca campo inválido + scroll até ele + mensagem via app.js
-  function erroNoCampo(id, mensagem) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.classList.add("campo-erro");
-      el.addEventListener("input", () => el.classList.remove("campo-erro"), { once: true });
-      setTimeout(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 80);
-    }
-    mostrarAlerta(mensagem);
-  }
+function erroNoCampo(id, mensagem) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  // Borda vermelha + shake
+  el.classList.add("campo-erro");
+  el.addEventListener("input", () => {
+    el.classList.remove("campo-erro");
+    el.parentElement.querySelector(".msg-erro")?.remove();
+  }, { once: true });
+
+  // Remove aviso anterior do mesmo campo (se houver)
+  el.parentElement.querySelector(".msg-erro")?.remove();
+
+  // Insere mensagem EMBAIXO do campo, dentro do .field
+  const span = document.createElement("span");
+  span.className = "msg-erro";
+  span.textContent = mensagem;
+  el.insertAdjacentElement("afterend", span);
+
+  // Scroll até o campo
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 80);
+}
 
   function validarDados(dados) {
     if (!nomeValido(dados.nome)) {

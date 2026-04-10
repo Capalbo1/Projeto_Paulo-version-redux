@@ -452,6 +452,15 @@ h2.etapa-visivel i {
   animation:    campo-shake .35s ease;
 }
 
+.msg-erro {
+  display: block;
+  font-size: 0.78rem;
+  color: #ff4566;
+  margin-top: 4px;
+  padding-left: 2px;
+  animation: campo-shake 0.35s ease;
+}
+
 @keyframes campo-shake {
   0%, 100% { transform: translateX(0); }
   25%       { transform: translateX(-5px); }
