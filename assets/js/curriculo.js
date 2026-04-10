@@ -728,3 +728,5 @@ function enviarCurriculo(dados) {
     console.warn("⚠️ Erro:", err);
   });
 }
+
+});
