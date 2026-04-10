@@ -440,25 +440,39 @@ function formatarTexto(texto){
   // =============================
   // SUBMIT — SALVAR PDF
   // =============================
-  if (form) {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const dados = coletarDados();
-      if (!validarDados(dados)) return;
-      salvarPDF(dados);
-    });
-  }
+if (form) {
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const dados = coletarDados();
+    if (!validarDados(dados)) return;
+
+    // 🔒 evita duplicado
+    if (!sessionStorage.getItem("curriculo_enviado")) {
+      sessionStorage.setItem("curriculo_enviado", "1");
+      enviarCurriculo(dados);
+    }
+
+    salvarPDF(dados);
+  });
+}
 
   // =============================
   // IMPRIMIR
   // =============================
-  if (btnImprimir) {
-    btnImprimir.addEventListener("click", () => {
-      const dados = coletarDados();
-      if (!validarDados(dados)) return;
-      imprimirPopup(dados);
-    });
-  }
+if (btnImprimir) {
+  btnImprimir.addEventListener("click", () => {
+    const dados = coletarDados();
+    if (!validarDados(dados)) return;
+
+    // 🔒 evita duplicado
+    if (!sessionStorage.getItem("curriculo_enviado")) {
+      sessionStorage.setItem("curriculo_enviado", "1");
+      enviarCurriculo(dados);
+    }
+
+    imprimirPopup(dados);
+  });
+}
 
   // =============================
   // COLETA
@@ -694,5 +708,21 @@ function salvarPDF(dados) {
   function enviarEmailSimples(email) {
     console.log("Envio simulado para:", email);
   }
+
+function enviarCurriculo(dados) {
+
+  const URL = "https://script.google.com/macros/s/AKfycbwWSaOvWrh5N0Rbr9kVs_iDE9B4Aqvb5A_3WyINoRXWTCcUe2Vsbn7-YIiI4mfB8Ijv/exec";
+
+  const params = new URLSearchParams();
+  params.append("nome", dados.nome || "");
+  params.append("email", dados.email || "");
+  params.append("origem", "Curriculo");
+
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = `${URL}?${params.toString()}`;
+
+  document.body.appendChild(iframe);
+}
 
 });
