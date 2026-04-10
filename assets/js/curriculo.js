@@ -710,19 +710,21 @@ function salvarPDF(dados) {
   }
 
 function enviarCurriculo(dados) {
+  console.log("🔥 ENVIAR CURRICULO DISPARADO", dados);
 
-  const URL = "https://script.google.com/macros/s/AKfycbwWSaOvWrh5N0Rbr9kVs_iDE9B4Aqvb5A_3WyINoRXWTCcUe2Vsbn7-YIiI4mfB8Ijv/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWSaOvWrh5N0Rbr9kVs_iDE9B4Aqvb5A_3WyINoRXWTCcUe2Vsbn7-YIiI4mfB8Ijv/exec";
 
   const params = new URLSearchParams();
-  params.append("nome", dados.nome || "");
-  params.append("email", dados.email || "");
+  params.append("nome",   dados.nome  || "");
+  params.append("email",  dados.email || "");
   params.append("origem", "Curriculo");
 
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = `${URL}?${params.toString()}`;
-
-  document.body.appendChild(iframe);
+  fetch(`${SCRIPT_URL}?${params.toString()}`, {
+    method: "GET",
+    mode:   "no-cors"
+  }).then(() => {
+    console.log("✅ Enviado para planilha");
+  }).catch(err => {
+    console.warn("⚠️ Erro:", err);
+  });
 }
-
-});
