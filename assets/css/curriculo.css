@@ -39,6 +39,10 @@
   grid-template-columns: 1fr 1fr 1fr;
 }
 
+.field-row.quadruple {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
 /* ===== Campo individual ===== */
 .field {
   display: flex;
@@ -89,6 +93,14 @@
   background: color-mix(in oklab, var(--card) 80%, var(--bg) 20%);
   margin-bottom: 12px;
   position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  /* 🔥 AGORA SIM COMPORTAMENTO CORRETO */
+  max-height: 420px;
+  overflow-y: auto;
+
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 
@@ -101,15 +113,31 @@
   display: none;
 }
 
-/* ===== Botão adicionar ===== */
-#add-exp {
-  margin-top: 4px;
+.exp-item::-webkit-scrollbar {
+  width: 6px;
+}
+
+.exp-item::-webkit-scrollbar-thumb {
+  background: rgba(0,200,240,.3);
+  border-radius: 6px;
+}
+
+/* ===== Botões adicionar ===== */
+#add-exp,
+#add-formacao {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+
   border-style: dashed;
   opacity: .8;
   transition: opacity .2s ease;
 }
 
-#add-exp:hover { opacity: 1; }
+#add-exp:hover,
+#add-formacao:hover {
+  opacity: 1;
+}
 
 /* ===== Ações finais ===== */
 .cta-row {
@@ -373,7 +401,7 @@ h2.etapa-campo.etapa-visivel,
 
 /* Bloco de experiência embutido no form */
 .exp-item.etapa-campo.etapa-visivel {
-  max-height: 1000px;
+  max-height: none;
 }
 
 /* Saída suave */
@@ -468,59 +496,72 @@ h2.etapa-visivel i {
 }
 
 /* -----------------------------------------------
-   EXPERIÊNCIAS DINÂMICAS
-   Scroll interno para o bloco não sair da tela.
+   EXPERIÊNCIAS / FORMAÇÕES DINÂMICAS
+   Comportamento: scroll da página (NÃO interno)
 ----------------------------------------------- */
 
-/* Container pai — sem clip */
+/* Container pai */
 #experiencias {
-  overflow:        visible;
-  display:         flex;
-  flex-direction:  column;
-  gap:             14px;
+  display: block;
+  width: 100%;
 }
 
-/* Bloco adicionado dinamicamente:
-   max-height limita a 75% da janela → scroll interno
-   se o conteúdo (campos + textarea) ultrapassar. */
+#formacoes {
+  display: block;
+  width: 100%;
+}
+
+/* ===== EXPERIÊNCIA ===== */
 .exp-item-dinamico {
-  scroll-margin-top: 90px;       /* respeita header fixo */
-  max-height:        75vh;
-  overflow-y:        auto;
-  overflow-x:        hidden;
-  /* scrollbar discreta */
-  scrollbar-width:        thin;
-  scrollbar-color:        rgba(0,200,240,.3) transparent;
+  scroll-margin-top: 90px;
+
+  display: block;
+  width: 100%;
+
+  /* crescimento livre */
+  max-height: none;
+  height: auto;
+
+  /* SEM scroll interno */
+  overflow: visible;
 }
 
-.exp-item-dinamico::-webkit-scrollbar {
-  width: 4px;
-}
-.exp-item-dinamico::-webkit-scrollbar-track {
-  background: transparent;
-}
-.exp-item-dinamico::-webkit-scrollbar-thumb {
-  background:    rgba(0,200,240,.3);
-  border-radius: 99px;
+/* ===== FORMAÇÃO ===== */
+.formacao-item {
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card) 80%, var(--bg) 20%);
+  margin-bottom: 12px;
+
+  display: block;
+  width: 100%;
+
+  /* 🔥 CORREÇÃO PRINCIPAL */
+  max-height: none;
+  height: auto;
+  overflow: visible;
+
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-/* Header do bloco dinâmico (rótulo + botão ✕) */
+.formacao-item:hover {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--border) 60%);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+}
+
+/* ===== HEADER ===== */
 .exp-item .exp-header {
-  display:         flex;
+  display: flex;
   justify-content: space-between;
-  align-items:     center;
-  margin-bottom:   14px;
-  /* fica fixo no topo do scroll interno */
-  position:        sticky;
-  top:             0;
-  z-index:         1;
-  padding-bottom:  6px;
+  align-items: center;
+  margin-bottom: 14px;
 }
 
 .exp-item .exp-label {
-  font-size:      .78rem;
-  font-weight:    700;
-  opacity:        .55;
+  font-size: .78rem;
+  font-weight: 700;
+  opacity: .55;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -688,7 +729,7 @@ main.container{
 ----------------------------------------------- */
 @media (max-width: 768px) {
   .exp-item-dinamico {
-    max-height: 80vh; /* um pouco mais de espaço em telas médias */
+    max-height: none; /* um pouco mais de espaço em telas médias */
   }
 }
 
@@ -698,10 +739,10 @@ main.container{
   h2.etapa-campo.etapa-visivel,
   .section-title.etapa-campo.etapa-visivel { max-height: 100px; }
 
-  .exp-item.etapa-campo.etapa-visivel { max-height: 1200px; }
+  .exp-item.etapa-campo.etapa-visivel { max-height: none; }
 
   .exp-item-dinamico {
-    max-height:  85vh;
+    max-height:  none;
     scroll-margin-top: 70px;
   }
 

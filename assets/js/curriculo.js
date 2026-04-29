@@ -9,6 +9,136 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAddExp    = document.getElementById("add-exp");
   const btnImprimir  = document.getElementById("btn-imprimir");
   const containerExp = document.getElementById("experiencias");
+  const containerForm = document.getElementById("formacoes");
+  const btnAddForm = document.getElementById("add-formacao");
+
+  const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+function preencherSelects(container){
+
+  // MÊS INÍCIO
+  container.querySelectorAll("select[name='mes_inicio']").forEach(sel=>{
+    if(sel.options.length > 0) return;
+    meses.forEach(m=>{
+      const op = document.createElement("option");
+      op.value = m;
+      op.textContent = m;
+      sel.appendChild(op);
+    });
+  });
+
+  // MÊS FIM
+  container.querySelectorAll("select[name='mes_fim']").forEach(sel=>{
+    if(sel.options.length > 0) return;
+    meses.forEach(m=>{
+      const op = document.createElement("option");
+      op.value = m;
+      op.textContent = m;
+      sel.appendChild(op);
+    });
+  });
+
+  // ANOS
+  const anoAtual = new Date().getFullYear();
+  const anoMax = anoAtual + 50;
+  const anoMin = 1950;
+
+  container.querySelectorAll("select[name='ano_inicio'], select[name='ano_fim']").forEach(sel=>{
+    if(sel.options.length > 0) return;
+
+    for(let i = anoMax; i >= anoMin; i--){
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = i;
+      sel.appendChild(op);
+    }
+  });
+}
+
+if(containerExp){
+  preencherSelects(containerExp);
+}
+
+if(containerForm){
+  preencherSelects(containerForm);
+}
+
+  if(btnAddForm){
+  btnAddForm.addEventListener("click", () => {
+
+    const div = document.createElement("div");
+    div.className = "formacao-item exp-item-dinamico";
+
+div.innerHTML = `
+  <div class="exp-header">
+    <span class="exp-label">Formação</span>
+  </div>
+
+  <div class="field">
+    <label>Curso / Escolaridade</label>
+    <input type="text" name="curso">
+  </div>
+
+  <div class="field">
+    <label>Instituição</label>
+    <input type="text" name="instituicao">
+  </div>
+
+  <div class="field-row quadruple">
+    <div class="field">
+      <label>Mês Início</label>
+      <select name="mes_inicio"></select>
+    </div>
+    <div class="field">
+      <label>Ano Início</label>
+      <select name="ano_inicio"></select>
+    </div>
+    <div class="field">
+      <label>Mês Fim</label>
+      <select name="mes_fim"></select>
+    </div>
+    <div class="field">
+      <label>Ano Fim</label>
+      <select name="ano_fim"></select>
+    </div>
+  </div>
+
+  <button type="button" class="button small btn-remover-formacao">
+    🗑 Remover formação
+  </button>
+`;
+
+containerForm.appendChild(div);
+
+// preencher selects primeiro
+preencherSelects(div);
+
+// scroll suave para a nova
+requestAnimationFrame(() => {
+  setTimeout(() => {
+    div.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 120);
+});
+
+// 🔥 EVENTO DE REMOVER (OBRIGATÓRIO)
+div.querySelector(".btn-remover-formacao").addEventListener("click", () => {
+
+  const temConteudo = ["curso", "instituicao", "mes_inicio"]
+    .some(n => div.querySelector(`[name="${n}"]`)?.value?.trim());
+
+  if (temConteudo) {
+    const ok = confirm("Remover esta formação?");
+    if (!ok) return;
+  }
+
+  div.remove();
+});
+}); // fecha addEventListener
+}   // fecha if(btnAddForm)
+
 
   let contadorExp = 1;
 
@@ -99,21 +229,70 @@ function erroNoCampo(id, mensagem) {
   }, 80);
 }
 
-  function validarDados(dados) {
-    if (!nomeValido(dados.nome)) {
-      erroNoCampo("nome", "Digite nome e sobrenome válidos (mínimo 2 palavras).");
+function validarDados(dados) {
+
+  // ===== validações existentes =====
+  if (!nomeValido(dados.nome)) {
+    erroNoCampo("nome", "Digite nome e sobrenome válidos (mínimo 2 palavras).");
+    return false;
+  }
+
+  if (!emailValido(dados.email) || emailFake(dados.email)) {
+    erroNoCampo("email", "Digite um e-mail válido.");
+    return false;
+  }
+
+  if (!telefoneValido(dados.telefone)) {
+    erroNoCampo("telefone", "Digite um telefone válido: (XX) XXXXX-XXXX.");
+    return false;
+  }
+
+  // ===== NOVA VALIDAÇÃO: DATAS =====
+
+  // mapa mês → número
+  const mapaMes = {
+    Jan:1, Fev:2, Mar:3, Abr:4, Mai:5, Jun:6,
+    Jul:7, Ago:8, Set:9, Out:10, Nov:11, Dez:12
+  };
+
+  // função auxiliar para validar um bloco
+  function validarPeriodo(item) {
+    const mi = item.querySelector('[name="mes_inicio"]')?.value;
+    const ai = item.querySelector('[name="ano_inicio"]')?.value;
+    const mf = item.querySelector('[name="mes_fim"]')?.value;
+    const af = item.querySelector('[name="ano_fim"]')?.value;
+
+    if (!mi || !ai) return true; // início incompleto não bloqueia aqui
+
+    // se não tiver fim → considera "Atual"
+    if (!mf || !af) return true;
+
+    const inicio = parseInt(ai) * 100 + mapaMes[mi];
+    const fim    = parseInt(af) * 100 + mapaMes[mf];
+
+    if (fim < inicio) {
+      item.scrollIntoView({ behavior: "smooth", block: "center" });
+      mostrarAlerta("Data final não pode ser menor que a inicial.");
       return false;
     }
-    if (!emailValido(dados.email) || emailFake(dados.email)) {
-      erroNoCampo("email", "Digite um e-mail válido.");
-      return false;
-    }
-    if (!telefoneValido(dados.telefone)) {
-      erroNoCampo("telefone", "Digite um telefone válido: (XX) XXXXX-XXXX.");
-      return false;
-    }
+
     return true;
   }
+
+  // valida EXPERIÊNCIAS
+  const exps = document.querySelectorAll(".exp-item");
+  for (let item of exps) {
+    if (!validarPeriodo(item)) return false;
+  }
+
+  // valida FORMAÇÕES
+  const forms = document.querySelectorAll(".formacao-item");
+  for (let item of forms) {
+    if (!validarPeriodo(item)) return false;
+  }
+
+  return true;
+}
 
   // =============================
   // ANIMAÇÕES — REVELAÇÃO PROGRESSIVA
@@ -240,80 +419,109 @@ function erroNoCampo(id, mensagem) {
 
   iniciarRevisao();
 
-  // =============================
-  // EXPERIÊNCIA DINÂMICA
-  // =============================
-  if (btnAddExp) {
-    btnAddExp.addEventListener("click", () => {
-      contadorExp++;
+// =============================
+// EXPERIÊNCIA DINÂMICA
+// =============================
+if (btnAddExp) {
+  btnAddExp.addEventListener("click", () => {
+    contadorExp++;
 
-      const div = document.createElement("div");
-      div.className = "exp-item exp-item-dinamico";
-      // Começa invisível para a animação de entrada
-      div.style.cssText = [
-        "opacity:0",
-        "transform:translateY(16px)",
-        "transition:opacity .38s ease, transform .38s ease"
-      ].join(";");
+    const div = document.createElement("div");
+    div.className = "exp-item exp-item-dinamico";
 
-      div.innerHTML = `
-        <div class="exp-header">
-          <span class="exp-label">Experiência ${contadorExp}</span>
-          <button type="button" class="btn-cancelar-exp" title="Remover">&#x2715;</button>
+    // estado inicial da animação
+    div.style.opacity = "0";
+    div.style.transform = "translateY(16px)";
+    div.style.transition = "all .35s ease";
+
+    div.innerHTML = `
+      <div class="exp-header">
+        <span class="exp-label">Experiência ${contadorExp}</span>
+        <button type="button" class="btn-cancelar-exp" title="Remover">&#x2715;</button>
+      </div>
+
+      <div class="field">
+        <label>Empresa</label>
+        <input type="text" name="empresa" placeholder="Nome da empresa">
+      </div>
+
+      <div class="field">
+        <label>Cargo</label>
+        <input type="text" name="cargo" placeholder="Seu cargo">
+      </div>
+
+      <div class="field-row quadruple">
+        <div class="field">
+          <label>Mês Início</label>
+          <select name="mes_inicio"></select>
         </div>
         <div class="field">
-          <label>Empresa</label>
-          <input type="text" name="empresa" placeholder="Nome da empresa">
+          <label>Ano Início</label>
+          <select name="ano_inicio"></select>
         </div>
         <div class="field">
-          <label>Cargo</label>
-          <input type="text" name="cargo" placeholder="Seu cargo">
+          <label>Mês Fim</label>
+          <select name="mes_fim"></select>
         </div>
         <div class="field">
-          <label>Período</label>
-          <input type="text" name="periodo" placeholder="Ex: Jan/2022 – Dez/2023">
+          <label>Ano Fim</label>
+          <select name="ano_fim"></select>
         </div>
-        <div class="field">
-          <label>Descrição das atividades</label>
-          <textarea name="descricao" rows="4" placeholder="Uma atividade por linha (cada linha vira um item no currículo)"></textarea>
-        </div>
-        <button type="button" class="button small btn-remover-exp">&#x1F5D1; Remover experiência</button>
-      `;
+      </div>
 
-      div.querySelectorAll("textarea").forEach(t => { t.style.resize = "none"; });
-      containerExp.appendChild(div);
+      <div class="field">
+        <label>Descrição das atividades</label>
+        <textarea name="descricao" rows="4" placeholder="Uma atividade por linha (cada linha vira um item no currículo)"></textarea>
+      </div>
 
-      // Anima entrada e rola até o bloco
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          div.style.opacity   = "1";
-          div.style.transform = "translateY(0)";
-          // Aguarda a transição iniciar antes de scrollar
-          setTimeout(() => {
-            div.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          }, 180);
-        });
-      });
+      <button type="button" class="button small btn-remover-exp">
+        🗑 Remover experiência
+      </button>
+    `;
 
-      // ✕ — Cancelar: remove sem confirmação
-      div.querySelector(".btn-cancelar-exp").addEventListener("click", () => {
-        fecharExpItem(div);
-      });
-
-      // Remover — pede confirmação se tiver conteúdo
-      div.querySelector(".btn-remover-exp").addEventListener("click", async () => {
-        const temConteudo = ["empresa", "cargo", "periodo", "descricao"]
-          .some(n => div.querySelector(`[name="${n}"]`)?.value?.trim());
-
-        if (temConteudo) {
-          const ok = await mostrarConfirmacao("Remover esta experiência?");
-          if (!ok) return;
-        }
-
-        fecharExpItem(div);
-      });
+    // textarea sem resize
+    div.querySelectorAll("textarea").forEach(t => {
+      t.style.resize = "none";
     });
-  }
+
+    // adiciona no DOM
+    containerExp.appendChild(div);
+
+    // preenche selects (IMPORTANTE vir antes do scroll)
+    preencherSelects(div);
+
+    // animação + scroll
+    requestAnimationFrame(() => {
+      div.style.opacity = "1";
+      div.style.transform = "translateY(0)";
+
+      setTimeout(() => {
+        div.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 120);
+    });
+
+    // botão X (sem confirmação)
+    div.querySelector(".btn-cancelar-exp").addEventListener("click", () => {
+      fecharExpItem(div);
+    });
+
+    // botão remover com confirmação
+    div.querySelector(".btn-remover-exp").addEventListener("click", () => {
+      const temConteudo = ["empresa", "cargo", "descricao", "mes_inicio"]
+        .some(n => div.querySelector(`[name="${n}"]`)?.value?.trim());
+
+      if (temConteudo) {
+        const ok = confirm("Remover esta experiência?");
+        if (!ok) return;
+      }
+
+      fecharExpItem(div);
+    });
+  });
+}
 
   // Animação de saída + remoção do DOM
   function fecharExpItem(div) {
@@ -357,7 +565,7 @@ function erroNoCampo(id, mensagem) {
 function capitalizarTexto(texto){
   return texto
     .toLowerCase()
-    .replace(/\b\w/g, l => l.toUpperCase());
+    .replace(/(^|\s|-)\S/g, l => l.toUpperCase());
 }
 
 // Nome (cada palavra)
@@ -448,7 +656,9 @@ function formatarIdiomas(texto){
 // Texto geral
 function formatarTexto(texto){
   if (!texto) return "";
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
+  return texto
+    .toLowerCase()
+    .replace(/(^|\s|-)\S/g, l => l.toUpperCase());
 }
 
   // =============================
@@ -507,33 +717,59 @@ if (btnImprimir) {
     document.querySelectorAll(".exp-item").forEach(item => {
       const empresa   = item.querySelector('[name="empresa"]')?.value?.trim()   || "";
       const cargo     = item.querySelector('[name="cargo"]')?.value?.trim()     || "";
-      const periodo   = item.querySelector('[name="periodo"]')?.value?.trim()   || "";
+      const mi = item.querySelector('[name="mes_inicio"]')?.value || "";
+      const ai = item.querySelector('[name="ano_inicio"]')?.value || "";
+      const mf = item.querySelector('[name="mes_fim"]')?.value || "";
+      const af = item.querySelector('[name="ano_fim"]')?.value || "";
       const descricao = item.querySelector('[name="descricao"]')?.value?.trim() || "";
-      if (empresa || cargo) experiencias.push({
+      if (empresa || cargo || mi) experiencias.push({
       empresa: capitalizarTexto(empresa),
       cargo: capitalizarTexto(cargo),
-      periodo: formatarPeriodo(periodo),
+      periodo: (mf && af)
+      ? `${mi}/${ai} – ${mf}/${af}`
+      : `${mi}/${ai} – Atual`,
       descricao: formatarTexto(descricao)
     });
     });
 
-  // RETORNO FINAL
-    return {
-      nome: formatarNome(get("nome")),
-      email: get("email"),
-      telefone: get("telefone"),
-      cidade: formatarCidade(get("cidade")),
-      endereco: formatarEndereco(get("endereco")),
-      objetivo: formatarTexto(get("objetivo")),
-      formacao: formatarFormacao(get("formacao")),
-      idiomas: formatarIdiomas(get("idiomas")),
-      cursos: formatarTexto(get("cursos")),
-      extras: formatarTexto(get("extras")),
-      foto: fotoBase64,
-      experiencias
-    };
-  }
+const formacoes = [];
 
+document.querySelectorAll(".formacao-item").forEach(item=>{
+  const curso = item.querySelector('[name="curso"]')?.value || "";
+  const inst  = item.querySelector('[name="instituicao"]')?.value || "";
+  const mi    = item.querySelector('[name="mes_inicio"]')?.value || "";
+  const ai    = item.querySelector('[name="ano_inicio"]')?.value || "";
+  const mf    = item.querySelector('[name="mes_fim"]')?.value || "";
+  const af    = item.querySelector('[name="ano_fim"]')?.value || "";
+
+  if (curso.trim()) {
+    formacoes.push(
+      `${capitalizarTexto(curso)} – ${capitalizarTexto(inst)} – ${
+        mi && ai ? `${mi}/${ai}` : ""
+      } – ${
+        mf && af ? `${mf}/${af}` : "Atual"
+      }`
+    );
+  }
+});
+
+// ✅ AGORA FORA DO LOOP
+return {
+  nome: formatarNome(get("nome")),
+  email: get("email"),
+  telefone: get("telefone"),
+  cidade: formatarCidade(get("cidade")),
+  endereco: formatarEndereco(get("endereco")),
+  objetivo: formatarTexto(get("objetivo")),
+  formacao: formacoes.join("<br>"),
+  idiomas: formatarIdiomas(get("idiomas")),
+  cursos: formatarTexto(get("cursos")),
+  extras: formatarTexto(get("extras")),
+  foto: fotoBase64,
+  experiencias
+};
+
+}
   // =============================
   // MONTAGEM — MODELO ROBERT HALF
   // Todos os estilos inline (sem interferência do CSS da página)
@@ -742,5 +978,16 @@ function enviarCurriculo(dados) {
     console.warn("⚠️ Erro:", err);
   });
 }
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    const tag = document.activeElement.tagName;
+
+    // permite enter apenas em textarea
+    if(tag !== "TEXTAREA"){
+      e.preventDefault();
+    }
+  }
+});
 
 });

@@ -125,9 +125,23 @@
               <input type="text" name="cargo" placeholder="Ex: Analista de TI">
             </div>
           </div>
-          <div class="field">
-            <label>Período</label>
-            <input type="text" name="periodo" placeholder="Ex: Jan/2022 – Dez/2024">
+          <div class="field-row quadruple">
+            <div class="field">
+              <label>Mês Início</label>
+              <select name="mes_inicio"></select>
+            </div>
+            <div class="field">
+              <label>Ano Início</label>
+              <select name="ano_inicio"></select>
+            </div>
+            <div class="field">
+              <label>Mês Fim</label>
+              <select name="mes_fim"></select>
+            </div>
+            <div class="field">
+              <label>Ano Fim</label>
+              <select name="ano_fim"></select>
+            </div>
           </div>
           <div class="field">
             <label>Descrição das atividades</label>
@@ -142,12 +156,47 @@
 </button>
 
       <!-- FORMAÇÃO -->
-      <h2><i class="fa-solid fa-graduation-cap"></i> Formação Acadêmica</h2>
+      <h2><i class="fa-solid fa-graduation-cap"></i> Escolaridade/Formação Acadêmica</h2>
+
+      <div id="formacoes">
+  <div class="formacao-item">
+    <div class="field">
+      <label>Curso / Escolaridade</label>
+      <input type="text" name="curso"
+        placeholder="Ex: Gestão da Tecnologia da Informação OU Ensino Médio Completo">
+    </div>
+
+    <div class="field">
+      <label>Instituição</label>
+      <input type="text" name="instituicao"
+        placeholder="Ex: FATEC Tatuí">
+    </div>
+
+    <div class="field-row quadruple">
+      <div class="field">
+        <label>Mês Início</label>
+        <select name="mes_inicio"></select>
+      </div>
+      <div class="field">
+        <label>Ano Início</label>
+        <select name="ano_inicio"></select>
+      </div>
+      <div class="field">
+        <label>Mês Fim</label>
+        <select name="mes_fim"></select>
+      </div>
 
       <div class="field">
-        <input type="text" id="formacao"
-          placeholder="Ex: Gestão da Tecnologia da Informação – FATEC Tatuí – 2025">
+        <label>Ano Fim</label>
+        <select name="ano_fim"></select>
       </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="button ghost" id="add-formacao">
+  <i class="fa-solid fa-plus"></i> Adicionar formação
+</button>
 
       <!-- IDIOMAS -->
       <h2><i class="fa-solid fa-globe"></i> Idiomas</h2>
