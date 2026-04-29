@@ -43,7 +43,8 @@ function preencherSelects(container){
   const anoMax = anoAtual + 50;
   const anoMin = 1950;
 
-  container.querySelectorAll("select[name='ano_inicio'], select[name='ano_fim']").forEach(sel=>{
+  // ANO INÍCIO
+  container.querySelectorAll("select[name='ano_inicio']").forEach(sel=>{
     if(sel.options.length > 0) return;
 
     for(let i = anoMax; i >= anoMin; i--){
@@ -53,6 +54,44 @@ function preencherSelects(container){
       sel.appendChild(op);
     }
   });
+
+  // ANO FIM
+  container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
+    if(sel.options.length > 1) return; // já tem "Atual"
+
+    for(let i = anoMax; i >= anoMin; i--){
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = i;
+      sel.appendChild(op);
+    }
+  });
+
+  // 🔥 COMPORTAMENTO "ATUAL"
+  container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
+    sel.addEventListener("change", () => {
+
+      const wrapper = sel.closest(".exp-item") || sel.closest(".formacao-item");
+      if (!wrapper) return;
+
+      const mesFim = wrapper.querySelector("select[name='mes_fim']");
+
+      if (sel.value === "atual") {
+        if (mesFim) {
+          mesFim.value = "";
+          mesFim.disabled = true;
+          mesFim.style.opacity = "0.5";
+        }
+      } else {
+        if (mesFim) {
+          mesFim.disabled = false;
+          mesFim.style.opacity = "1";
+        }
+      }
+
+    });
+  });
+
 }
 
 if(containerExp){
@@ -99,7 +138,9 @@ div.innerHTML = `
     </div>
     <div class="field">
       <label>Ano Fim</label>
-      <select name="ano_fim"></select>
+      <select name="ano_fim">
+        <option value="atual">Atual</option>
+      </select>
     </div>
   </div>
 
@@ -265,13 +306,12 @@ function validarDados(dados) {
     if (!mi || !ai) return true; // início incompleto não bloqueia aqui
 
     // se não tiver fim → considera "Atual"
-    if (!mf || !af) return true;
+    if (!mf || !af || af === "atual") return true;
 
     const inicio = parseInt(ai) * 100 + mapaMes[mi];
     const fim    = parseInt(af) * 100 + mapaMes[mf];
 
     if (fim < inicio) {
-      item.scrollIntoView({ behavior: "smooth", block: "center" });
       item.querySelector('[name="ano_fim"]').classList.add("campo-erro");
 
 item.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -469,7 +509,9 @@ if (btnAddExp) {
         </div>
         <div class="field">
           <label>Ano Fim</label>
-          <select name="ano_fim"></select>
+            <select name="ano_fim">
+              <option value="atual">Atual</option>
+            </select>
         </div>
       </div>
 
@@ -729,9 +771,11 @@ if (btnImprimir) {
       if (empresa || cargo || mi) experiencias.push({
       empresa: capitalizarTexto(empresa),
       cargo: capitalizarTexto(cargo),
-      periodo: (mf && af)
-      ? `${mi}/${ai} – ${mf}/${af}`
-      : `${mi}/${ai} – Atual`,
+      periodo: (af === "atual")
+        ? `${mi}/${ai} – Atual`
+        : (mf && af)
+          ? `${mi}/${ai} – ${mf}/${af}`
+          : `${mi}/${ai}`,
       descricao: formatarTexto(descricao)
     });
     });
