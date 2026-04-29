@@ -317,7 +317,7 @@ function validarDados(dados) {
     }
 
     const inicio = parseInt(ai) * 100 + mapaMes[mi];
-    const fim    = parseInt(af) * 100 + mapaMes[mf];
+    const fim = parseInt(af) * 100 + (mapaMes[mf] || 0);
 
     if (fim < inicio) {
       item.querySelector('[name="ano_fim"]').classList.add("campo-erro");
