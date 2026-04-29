@@ -55,17 +55,17 @@ function preencherSelects(container){
     }
   });
 
-  // ANO FIM
-  container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
-    if(sel.options.length > 0) return; // já tem "Atual"
+// ANO FIM
+container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
+  if(sel.options.length > 1) return; // já tem "Atual" + anos
 
-    for(let i = anoMax; i >= anoMin; i--){
-      const op = document.createElement("option");
-      op.value = i;
-      op.textContent = i;
-      sel.appendChild(op);
-    }
-  });
+  for(let i = anoMax; i >= anoMin; i--){
+    const op = document.createElement("option");
+    op.value = i;
+    op.textContent = i;
+    sel.appendChild(op);
+  }
+});
 
   // 🔥 COMPORTAMENTO "ATUAL"
   container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
