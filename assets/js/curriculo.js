@@ -288,6 +288,22 @@ function validarDados(dados) {
     return false;
   }
 
+  const estado = document.getElementById("estado")?.value;
+
+  if (!estado) {
+    erroNoCampo("estado", "Selecione um estado (UF).");
+    return false;
+  }
+
+  if (!formatarIdiomas(dados.idiomas)) {
+    erroNoCampo("idiomas", "Informe idioma com nível (ex: Inglês avançado).");
+    return false;
+  }
+
+  // ✅ IMPORTANTE — sucesso
+  return true;
+  }
+
   // ===== NOVA VALIDAÇÃO: DATAS =====
 
   // mapa mês → número
@@ -609,9 +625,20 @@ if (btnAddExp) {
 
 // Primeira letra maiúscula em cada palavra
 function capitalizarTexto(texto){
+  if (!texto) return "";
+
+  const minusculas = ["de","da","do","das","dos","e","em","para","por","com","sem","a","o"];
+
   return texto
     .toLowerCase()
-    .replace(/(^|\s|-)\S/g, l => l.toUpperCase());
+    .split(" ")
+    .map((palavra, i) => {
+      if (i > 0 && minusculas.includes(palavra)) {
+        return palavra;
+      }
+      return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+    })
+    .join(" ");
 }
 
 // Nome (cada palavra)
@@ -668,23 +695,22 @@ function formatarFormacao(texto){
 function formatarIdiomas(texto){
   if (!texto) return "";
 
-  return texto.split(",").map(i => {
+  const resultado = [];
+
+  texto.split(",").forEach(i => {
 
     let item = i.trim().toLowerCase();
 
-    // normaliza acentos bagunçados (ex: avancado, intermedario etc)
     item = item
       .replace(/avancado/g, "avançado")
       .replace(/intermediario/g, "intermediário")
       .replace(/basico/g, "básico");
 
-    // detecta nível
     let nivel = "";
     if (item.includes("avançado")) nivel = "Avançado";
     else if (item.includes("intermediário")) nivel = "Intermediário";
     else if (item.includes("básico")) nivel = "Básico";
 
-    // remove o nível do texto principal
     let idioma = item
       .replace("avançado", "")
       .replace("intermediário", "")
@@ -693,18 +719,23 @@ function formatarIdiomas(texto){
 
     idioma = capitalizarTexto(idioma);
 
-    // monta saída
-    return nivel ? `${idioma} (${nivel})` : idioma;
+    // ❌ BLOQUEIA idioma sem nível
+    if (!idioma || !nivel) return;
 
-  }).join(", ");
+    resultado.push(`${idioma} (${nivel})`);
+
+  });
+
+  return resultado.join(", ");
 }
 
 // Texto geral
 function formatarTexto(texto){
   if (!texto) return "";
+
   return texto
     .toLowerCase()
-    .replace(/(^|\s|-)\S/g, l => l.toUpperCase());
+    .replace(/^\s*\w/, l => l.toUpperCase());
 }
 
   // =============================
@@ -806,7 +837,12 @@ return {
   nome: formatarNome(get("nome")),
   email: get("email"),
   telefone: get("telefone"),
-  cidade: formatarCidade(get("cidade")),
+  const cidade = get("cidade");
+  const estado = document.getElementById("estado")?.value || "";
+
+  cidade: cidade && estado
+    ? `${capitalizarTexto(cidade)} - ${estado}`
+    : capitalizarTexto(cidade),
   endereco: formatarEndereco(get("endereco")),
   objetivo: formatarTexto(get("objetivo")),
   formacao: formacoes.join("<br>"),
