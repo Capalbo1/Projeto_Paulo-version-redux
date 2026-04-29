@@ -57,7 +57,7 @@ function preencherSelects(container){
 
   // ANO FIM
   container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
-    if(sel.options.length > 1) return; // já tem "Atual"
+    if(sel.options.length > 0) return; // já tem "Atual"
 
     for(let i = anoMax; i >= anoMin; i--){
       const op = document.createElement("option");
@@ -71,14 +71,14 @@ function preencherSelects(container){
   container.querySelectorAll("select[name='ano_fim']").forEach(sel=>{
     sel.addEventListener("change", () => {
 
-      const wrapper = sel.closest(".exp-item") || sel.closest(".formacao-item");
+      const wrapper = sel.closest(".exp-item"); // só experiência
       if (!wrapper) return;
 
       const mesFim = wrapper.querySelector("select[name='mes_fim']");
 
       if (sel.value === "atual") {
         if (mesFim) {
-          mesFim.value = "";
+          mesFim.selectedIndex = 0;
           mesFim.disabled = true;
           mesFim.style.opacity = "0.5";
         }
@@ -138,9 +138,7 @@ div.innerHTML = `
     </div>
     <div class="field">
       <label>Ano Fim</label>
-      <select name="ano_fim">
-        <option value="atual">Atual</option>
-      </select>
+      <select name="ano_fim"></select>
     </div>
   </div>
 
@@ -272,7 +270,7 @@ function erroNoCampo(id, mensagem) {
 
 function validarDados(dados) {
 
-  // ===== validações existentes =====
+  // ===== validações básicas =====
   if (!nomeValido(dados.nome)) {
     erroNoCampo("nome", "Digite nome e sobrenome válidos (mínimo 2 palavras).");
     return false;
@@ -289,63 +287,55 @@ function validarDados(dados) {
   }
 
   const estado = document.getElementById("estado")?.value;
-
   if (!estado) {
     erroNoCampo("estado", "Selecione um estado (UF).");
     return false;
   }
 
-  if (!formatarIdiomas(dados.idiomas)) {
+  const idiomasFormatados = formatarIdiomas(dados.idiomas);
+  if (!idiomasFormatados) {
     erroNoCampo("idiomas", "Informe idioma com nível (ex: Inglês avançado).");
     return false;
   }
 
-  // ✅ IMPORTANTE — sucesso
-  return true;
-  }
-
-  // ===== NOVA VALIDAÇÃO: DATAS =====
-
-  // mapa mês → número
+  // ===== VALIDAÇÃO DE DATAS =====
   const mapaMes = {
     Jan:1, Fev:2, Mar:3, Abr:4, Mai:5, Jun:6,
     Jul:7, Ago:8, Set:9, Out:10, Nov:11, Dez:12
   };
 
-  // função auxiliar para validar um bloco
   function validarPeriodo(item) {
     const mi = item.querySelector('[name="mes_inicio"]')?.value;
     const ai = item.querySelector('[name="ano_inicio"]')?.value;
     const mf = item.querySelector('[name="mes_fim"]')?.value;
     const af = item.querySelector('[name="ano_fim"]')?.value;
 
-    if (!mi || !ai) return true; // início incompleto não bloqueia aqui
-
-    // se não tiver fim → considera "Atual"
-    if (!mf || !af || af === "atual") return true;
+    if (!mi || !ai || !mf || !af) {
+      mostrarAlerta("Preencha todas as datas (início e fim).");
+      item.scrollIntoView({ behavior: "smooth", block: "center" });
+      return false;
+    }
 
     const inicio = parseInt(ai) * 100 + mapaMes[mi];
     const fim    = parseInt(af) * 100 + mapaMes[mf];
 
     if (fim < inicio) {
       item.querySelector('[name="ano_fim"]').classList.add("campo-erro");
-
-item.scrollIntoView({ behavior: "smooth", block: "center" });
-
-mostrarAlerta("Data final não pode ser menor que a inicial.");
+      item.scrollIntoView({ behavior: "smooth", block: "center" });
+      mostrarAlerta("Data final não pode ser menor que a inicial.");
       return false;
     }
 
     return true;
   }
 
-  // valida EXPERIÊNCIAS
+  // valida experiências
   const exps = document.querySelectorAll(".exp-item");
   for (let item of exps) {
     if (!validarPeriodo(item)) return false;
   }
 
-  // valida FORMAÇÕES
+  // valida formações
   const forms = document.querySelectorAll(".formacao-item");
   for (let item of forms) {
     if (!validarPeriodo(item)) return false;
@@ -686,6 +676,19 @@ function formatarPeriodo(periodo){
   ).replace(/\s*-\s*/g, " – ")
 }
 
+function statusFormacao(ai, mi, af, mf) {
+  const mesesIdx = {
+    Jan:0, Fev:1, Mar:2, Abr:3, Mai:4, Jun:5,
+    Jul:6, Ago:7, Set:8, Out:9, Nov:10, Dez:11
+  };
+
+  const hoje = new Date();
+
+  const fim = new Date(parseInt(af), mesesIdx[mf], 1);
+
+  return fim >= hoje ? "Cursando" : "Completo";
+}
+
 // Formação
 function formatarFormacao(texto){
   return capitalizarTexto(texto);
@@ -822,23 +825,23 @@ document.querySelectorAll(".formacao-item").forEach(item=>{
   const af    = item.querySelector('[name="ano_fim"]')?.value || "";
 
   if (curso.trim()) {
+
+    const status = statusFormacao(ai, mi, af, mf);
+
     formacoes.push(
-      `${capitalizarTexto(curso)} – ${capitalizarTexto(inst)} – ${
-        mi && ai ? `${mi}/${ai}` : ""
-      } – ${
-        mf && af ? `${mf}/${af}` : "Atual"
-      }`
-    );
+  `${capitalizarTexto(curso)} – ${capitalizarTexto(inst)} – ${mi}/${ai} – ${mf}/${af} (${status})`
+);
+
   }
 });
 
-// ✅ AGORA FORA DO LOOP
+const cidade = get("cidade");
+const estado = document.getElementById("estado")?.value || "";
+
 return {
   nome: formatarNome(get("nome")),
   email: get("email"),
   telefone: get("telefone"),
-  const cidade = get("cidade");
-  const estado = document.getElementById("estado")?.value || "";
 
   cidade: cidade && estado
     ? `${capitalizarTexto(cidade)} - ${estado}`
