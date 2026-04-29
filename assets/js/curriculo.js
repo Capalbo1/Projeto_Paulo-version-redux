@@ -272,7 +272,11 @@ function validarDados(dados) {
 
     if (fim < inicio) {
       item.scrollIntoView({ behavior: "smooth", block: "center" });
-      mostrarAlerta("Data final não pode ser menor que a inicial.");
+      item.querySelector('[name="ano_fim"]').classList.add("campo-erro");
+
+item.scrollIntoView({ behavior: "smooth", block: "center" });
+
+mostrarAlerta("Data final não pode ser menor que a inicial.");
       return false;
     }
 
