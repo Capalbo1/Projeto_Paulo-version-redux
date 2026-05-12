@@ -48,9 +48,21 @@
 <main class="container">
   <!-- CARD PRINCIPAL -->
   <section class="result-card container" id="topo-resultado">
-    <header class="result-head">
-      <h2>Resultado DISC</h2>
-    </header>
+<header class="result-head">
+  <h2>Resultado DISC</h2>
+
+  <div class="pdf-meta">
+    <span>
+      <strong>Origem:</strong>
+      <span id="res-origem">—</span>
+    </span>
+
+    <span>
+      <strong>Data:</strong>
+      <span id="res-data">—</span>
+    </span>
+  </div>
+</header>
 
     <div class="result-grid">
       <!-- ESQUERDA -->
@@ -319,7 +331,10 @@ function enviarResultadoParaGoogle(dados) {
   params.append('perfil', dados.perfilPredominante || '');
   params.append('areas', dados.areasRecomendadas || '');
   params.append('cargos', dados.cargosIndicados || '');
-  params.append('origem', 'Santa Casa'); // Fixo
+  params.append(
+  'origem',
+  dados.origem || localStorage.getItem("disc_origem") || 'Não informado'
+);
 
   const url = `${URL_APPS_SCRIPT}?${params.toString()}`;
   console.log('🔗 URL gerada:', url);
@@ -373,6 +388,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const nome = localStorage.getItem("disc_nome") || "Participante";
   const email = localStorage.getItem("disc_email") || "";
   const respostas = JSON.parse(localStorage.getItem("disc_respostas") || "[]");
+  if (respostas.length === 0) {
+
+  document.getElementById("res-nome").textContent = "Resultado indisponível";
+  document.getElementById("res-email").textContent = "";
+
+  document.getElementById("res-pred").textContent = "—";
+  document.getElementById("pred-label").textContent = "—";
+
+  document.getElementById("res-origem").textContent =
+    localStorage.getItem("disc_origem") || "Não informado";
+
+  document.getElementById("res-data").textContent =
+    new Date().toLocaleDateString("pt-BR");
+
+  return;
+}
 
   console.log('📋 Nome:', nome);
   console.log('📧 Email:', email);
@@ -401,6 +432,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("res-pred").textContent = pred;
   document.getElementById("res-pred").classList.add(pred.toLowerCase());
   document.getElementById("pred-label").textContent = pred;
+  document.getElementById("res-origem").textContent =
+  localStorage.getItem("disc_origem") || "Não informado";
+
+document.getElementById("res-data").textContent =
+  new Date().toLocaleDateString("pt-BR");
 
   document.querySelectorAll(".suggestion-card").forEach(c => c.classList.remove("is-dominant"));
   const cardPred = document.getElementById("card-" + pred.toLowerCase());
@@ -440,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
     perfilPredominante: perfisNomes[pred],
     areasRecomendadas: areasTexto,
     cargosIndicados: cargosTexto,
-    origem: ""
+    origem: localStorage.getItem("disc_origem") || ""
   };
 
   console.log('📦 Dados preparados para envio:', dadosParaEnviar);
